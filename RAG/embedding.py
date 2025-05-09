@@ -25,7 +25,7 @@ def embed_faq_list_batch(faq_list: list, batch_size=20) -> list:
     embedded = []
     
     # 依照 batch_size 切批次
-    for i in range(len(faq_list), batch_size):
+    for i in range(0,len(faq_list), batch_size):
         batch = faq_list[i:i + batch_size]
 
         # 將每一筆 FAQ 組合成輸入字串
@@ -59,7 +59,7 @@ def embed_faq_list_batch(faq_list: list, batch_size=20) -> list:
 
 def embed_faq():
     load_api_key()
-    with open("fdata/1.JSON", "r", encoding="utf-8") as f:
+    with open("fdata/SOP.JSON", "r", encoding="utf-8") as f:
         faq_list = json.load(f)
 
     embedded_faqs = embed_faq_list_batch(faq_list)

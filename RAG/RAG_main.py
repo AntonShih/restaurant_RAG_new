@@ -211,6 +211,9 @@ def main():
         # 生成嵌入向量 (使用embedding.py中的函數)
         print("\n🧠 正在生成向量嵌入...")
         embedded_faqs = embed_faq_list_batch(all_faqs)
+
+        # ✅ 確保每筆 FAQ 都有成功嵌入向量才上傳
+        embedded_faqs = [f for f in embedded_faqs if "embedding" in f]
         
         # 上傳到向量資料庫
         print("\n⬆️ 正在上傳向量到Pinecone...")
