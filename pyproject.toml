@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "restaurant-rag-bot"
+version = "0.1.0"
+description = "A LINE Bot powered by Gemini and Qdrant for restaurant staff Q&A"
+authors = ["anton_shih"]
+package-mode = false
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+# Gemini Pro SDK
+google-generativeai = "^0.5.2"
+
+# 向量資料庫
+pinecone-client = "^6.0.0"
+
+# Web 後端
+fastapi = "^0.111.0"
+uvicorn = "^0.29.0"
+
+# LINE Bot
+line-bot-sdk = "^3.14.2"
+
+# 常用工具
+pandas = "^2.2.3"
+pydantic = "^2.10.5"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+
+# 測試
+pytest = "^8.3.4"
+openai = "^1.77.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
