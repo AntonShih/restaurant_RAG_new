@@ -137,3 +137,41 @@ def handle_postback(event):
                     messages=[TextMessage(text=f"🔐 請輸入 {role_text_map.get(role, role)} 的密碼")]
                 )
             )
+
+# liff_verify_api.py
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+# 可與 webhook 共用此記憶體資料，或改接 Redis/DB
+user_roles = {}
+role_text_map = {
+    "kitchen": "內場人員",
+    "front": "外場人員",
+    "reserve": "儲備幹部",
+    "leader": "組長",
+    "vice_manager": "副店長",
+    "manager": "店長"
+}
+
+router = APIRouter()
+
+class VerifyRequest(BaseModel):
+    user_id: str
+    role: str
+    password: str
+
+@router.post("/api/verify")
+async def verify_user(data: VerifyRequest):
+    expected_password = os.getenv(f"PASSWORD_{data.role.upper()}")
+
+    if data.password == expected_password:
+        user_roles[data.user_id] = data.role
+        return {
+            "success": True,
+            "message": f"✅ 驗證成功，您已被設為「{role_text_map.get(data.role, data.role)}」"
+        }
+    else:
+        return {
+            "success": False,
+            "message": "❌ 密碼錯誤，請重新輸入"
+        }
