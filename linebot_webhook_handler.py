@@ -1,23 +1,21 @@
 from linebot.v3.webhooks import MessageEvent, PostbackEvent, TextMessageContent
 from linebot.v3.messaging import (
     Configuration, ApiClient, MessagingApi,
-    ReplyMessageRequest, TextMessage, TemplateMessage,
-    ButtonsTemplate, PostbackAction, CarouselTemplate, CarouselColumn
+    ReplyMessageRequest, TextMessage
 )
 import os
+from line_bot.models import save_user_role, get_user_role
 
 # 初始化 LINE Bot 設定
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 
-# 身分認證暫存區
-user_roles = {}  # user_id: role
+# 身分認證暫存區（可選：改成 Redis）
 pending_password_check = {}  # user_id: role（等待輸入密碼）
 
 # 🌟 身分名稱對照表
 role_text_map = {
-    "kitchen": "內場人員",
-    "front": "外場人員",
+    "normal": "一般職員",
     "reserve": "儲備幹部",
     "leader": "組長",
     "vice_manager": "副店長",
@@ -50,7 +48,7 @@ def handle_message(event):
             expected_password = os.getenv(f"PASSWORD_{role.upper()}")
 
             if text == expected_password:
-                user_roles[user_id] = role
+                save_user_role(user_id, role)
                 del pending_password_check[user_id]
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
@@ -67,46 +65,12 @@ def handle_message(event):
                 )
             return
 
-        # ✅ 使用者輸入「認證」 → 回傳 Carousel 選單
-        if text == "認證":
-            carousel_template = TemplateMessage(
-                alt_text="職等認證選單",
-                template=CarouselTemplate(
-                    columns=[
-                        CarouselColumn(
-                            title="請選擇您的職等",
-                            text="第一頁",
-                            actions=[
-                                PostbackAction(label="內場人員", data="role:kitchen"),
-                                PostbackAction(label="外場人員", data="role:front"),
-                                PostbackAction(label="儲備幹部", data="role:reserve")
-                            ]
-                        ),
-                        CarouselColumn(
-                            title="請選擇您的職等",
-                            text="第二頁",
-                            actions=[
-                                PostbackAction(label="組長", data="role:leader"),
-                                PostbackAction(label="副店長", data="role:vice_manager"),
-                                PostbackAction(label="店長", data="role:manager")
-                            ]
-                        )
-                    ]
-                )
-            )
-            line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[carousel_template]
-                )
-            )
-            return
+        # ✅ 一般訊息根據身份回覆對應內容，抓腳色
+        user_doc = get_user_role(user_id)
+        role = user_doc["role"] if user_doc else "guest"
 
-        # ✅ 一般訊息根據身份回覆對應內容
-        role = user_roles.get(user_id, "guest")
         reply = {
-            "kitchen": "🍳 內場人員，請檢查備料清單並確認溫控紀錄。",
-            "front": "🍽 外場人員，今天的招呼語是：歡迎光臨，我們有新品推薦！",
+            "normal": "🍳 一般職員，請檢查備料清單並確認溫控紀錄。",
             "reserve": "🧑‍🎓 儲備幹部，今日任務請至公告欄查看。",
             "leader": "👩‍🔧 組長您好，請確認排班表並檢查員工出勤。",
             "vice_manager": "👨‍💼 副店長，協助店長處理營運狀況。",
@@ -137,41 +101,3 @@ def handle_postback(event):
                     messages=[TextMessage(text=f"🔐 請輸入 {role_text_map.get(role, role)} 的密碼")]
                 )
             )
-
-# liff_verify_api.py
-from fastapi import APIRouter
-from pydantic import BaseModel
-
-# 可與 webhook 共用此記憶體資料，或改接 Redis/DB
-user_roles = {}
-role_text_map = {
-    "kitchen": "內場人員",
-    "front": "外場人員",
-    "reserve": "儲備幹部",
-    "leader": "組長",
-    "vice_manager": "副店長",
-    "manager": "店長"
-}
-
-router = APIRouter()
-
-class VerifyRequest(BaseModel):
-    user_id: str
-    role: str
-    password: str
-
-@router.post("/api/verify")
-async def verify_user(data: VerifyRequest):
-    expected_password = os.getenv(f"PASSWORD_{data.role.upper()}")
-
-    if data.password == expected_password:
-        user_roles[data.user_id] = data.role
-        return {
-            "success": True,
-            "message": f"✅ 驗證成功，您已被設為「{role_text_map.get(data.role, data.role)}」"
-        }
-    else:
-        return {
-            "success": False,
-            "message": "❌ 密碼錯誤，請重新輸入"
-        }

@@ -1,5 +1,6 @@
 import os
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,10 +13,9 @@ DB_NAME = os.getenv("MONGODB_DB_NAME", "linebot_db")
 client = None
 
 def get_mongodb_client():
-    """獲取 MongoDB 客戶端連接"""
     global client
     if client is None:
-        client = MongoClient(MONGODB_URI)
+        client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))
     return client
 
 def get_db():

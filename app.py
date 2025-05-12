@@ -3,14 +3,36 @@ from linebot.v3 import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
 from dotenv import load_dotenv
 import os
+from contextlib import asynccontextmanager
 
-# ⬇️ 引入剛剛寫好的模組
+from line_bot.models import init_user_roles_index
+from line_bot.mongodb_client import get_db, close_mongodb_client  # ✅ 換成 get_db
 from linebot_webhook_handler import handle_message, handle_postback
-from linebot_webhook_handler import router as liff_router
+from linebot.v3.webhooks import MessageEvent, TextMessageContent, PostbackEvent
 
 load_dotenv()
-app = FastAPI()
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # ✅ 使用 get_db() 正確取得 Database 物件
+    db = get_db()
+    init_user_roles_index()
+    print(f"✅ MongoDB 已啟動，資料庫名稱：{db.name}")
+    print("📂 Collections 列表：", db.list_collection_names())
+    yield
+    close_mongodb_client()
+    print("🛑 MongoDB 已關閉")
+
+app = FastAPI(lifespan=lifespan)
+
+@handler.add(MessageEvent, message=TextMessageContent)
+def _handle_message(event):
+    handle_message(event)
+
+@handler.add(PostbackEvent)
+def _handle_postback(event):
+    handle_postback(event)
 
 @app.post("/callback")
 async def callback(request: Request, x_line_signature: str = Header(...)):
@@ -22,16 +44,4 @@ async def callback(request: Request, x_line_signature: str = Header(...)):
         raise HTTPException(status_code=400, detail="Invalid signature")
     return {"status": "ok"}
 
-# 綁定事件
-from linebot.v3.webhooks import MessageEvent, TextMessageContent, PostbackEvent
 
-@handler.add(MessageEvent, message=TextMessageContent)
-def _handle_message(event):
-    handle_message(event)
-
-@handler.add(PostbackEvent)
-def _handle_postback(event):
-    handle_postback(event)
-
-
-app.include_router(liff_router)

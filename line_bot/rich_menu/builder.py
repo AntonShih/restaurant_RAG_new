@@ -38,10 +38,10 @@ def create_rich_menu():
         blob_api = MessagingApiBlob(api_client)
 
         areas = [
-            RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=MessageAction(text="認證：kitchen")),
-            RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=MessageAction(text="認證：front")),
-            RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=MessageAction(text="認證：reserve")),
-            RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=MessageAction(text="認證：leader")),
+            RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=MessageAction(text="認證：normal")),
+            RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=MessageAction(text="認證：reserve")),
+            RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=MessageAction(text="認證：leader")),
+            RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=MessageAction(text="認證：vice_manager")),
             RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=MessageAction(text="認證：manager")),
             RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=MessageAction(text="我要查詢"))
         ]

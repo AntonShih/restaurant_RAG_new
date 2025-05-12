@@ -7,7 +7,8 @@ def format_for_pinecone(faq_list: list) -> list:
             "metadata": {
                 "question": faq["question"],
                 "answer": faq["answer"],
-                "category": faq.get("category", "")
+                "category": faq.get("category", ""),
+                "access_level": faq.get("access_level", 1)  # 添加權限等級到元數據
             }
         }
         pinecone_vectors.append(vector)
