@@ -5,6 +5,8 @@ from linebot.v3.messaging import (
 )
 import os
 from line_bot.models import save_user_role, get_user_role
+from RAG.query_engine_safe import answer_query_secure
+
 
 # 初始化 LINE Bot 設定
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
@@ -65,25 +67,16 @@ def handle_message(event):
                 )
             return
 
-        # ✅ 一般訊息根據身份回覆對應內容，抓腳色
-        user_doc = get_user_role(user_id)
-        role = user_doc["role"] if user_doc else "guest"
-
-        reply = {
-            "normal": "🍳 一般職員，請檢查備料清單並確認溫控紀錄。",
-            "reserve": "🧑‍🎓 儲備幹部，今日任務請至公告欄查看。",
-            "leader": "👩‍🔧 組長您好，請確認排班表並檢查員工出勤。",
-            "vice_manager": "👨‍💼 副店長，協助店長處理營運狀況。",
-            "manager": "👑 店長您好，這是您的營運報表與 SOP：...",
-            "guest": "請先輸入「認證」以選擇您的職等"
-        }.get(role, "請先認證")
+        # ✅ 啟動 RAG 查詢流程
+        response = answer_query_secure(text, user_id)
 
         line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=reply)]
+                messages=[TextMessage(text=response)]
             )
         )
+
 
 def handle_postback(event):
     user_id = event.source.user_id

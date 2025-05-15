@@ -19,8 +19,9 @@ index = pinecone.Index(index_name)
 def upsert_faq(faq_id, embedding, metadata):
     index.upsert(vectors=[(faq_id, embedding, metadata)])
 
-def query_faq(vector, top_k=3):
-    result = index.query(vector=vector, top_k=top_k, include_metadata=True)
+def query_faq(user_embedding, top_k=3):
+    query_vector = user_embedding  # 明確命名
+    result = index.query(vector=query_vector, top_k=3)
     return result['matches']
 
 def delete_faq(faq_id):

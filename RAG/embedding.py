@@ -32,11 +32,11 @@ def embed_faq_list_batch(faq_list: list, batch_size=20) -> list:
         # 列表生成式 for 寫在後面 [ expression for item in iterable ]
         # input_texts = []
         # for faq in batch:
-        # text = f"分類: {faq.get('category', '')} 問題: {faq['question']} 回答: {faq['answer']}"
+        # text = f"分類: {faq.get('category')} 問題: {faq['question']} 回答: {faq['answer']}"
         # input_texts.append(text)
 
         input_texts = [
-            f"分類: {faq.get('category', '')} 問題: {faq['question']} 回答: {faq['answer']}"
+            f"分類: {faq.get('category')} 問題: {faq['question']} 回答: {faq['answer']}"
             for faq in batch
         ]
 
@@ -57,17 +57,17 @@ def embed_faq_list_batch(faq_list: list, batch_size=20) -> list:
 
     return embedded
 
-def embed_faq():
-    load_api_key()
-    with open("fdata/SOP.JSON", "r", encoding="utf-8") as f:
-        faq_list = json.load(f)
+# def embed_faq():
+#     load_api_key()
+#     with open("fdata/SOP.JSON", "r", encoding="utf-8") as f:
+#         faq_list = json.load(f)
 
-    embedded_faqs = embed_faq_list_batch(faq_list)
+#     embedded_faqs = embed_faq_list_batch(faq_list)
 
-    with open("embedded_faq.json", "w", encoding="utf-8") as f:
-        json.dump(embedded_faqs, f, ensure_ascii=False, indent=2)
+#     with open("embedded_faq.json", "w", encoding="utf-8") as f:
+#         json.dump(embedded_faqs, f, ensure_ascii=False, indent=2)
 
-    print("✅ 成功將 FAQ 嵌入向量並儲存")
+#     print("✅ 成功將 FAQ 嵌入向量並儲存")
 
 
 if __name__ == "__main__":
