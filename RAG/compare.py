@@ -70,17 +70,17 @@ if __name__ == "__main__":
     user_input = input("請輸入你的問題：\n> ")
     results = search_similar_faqs(user_input)
     
-    # print_embedding_response(user_input)
-    query_vector = get_embedding(user_input)
-    full_response = index.query(
-    vector=query_vector,
-    top_k=3,
-    include_metadata=True,
-    namespace=namespace
-    )
+    # # print_embedding_response(user_input)
+    # query_vector = get_embedding(user_input)
+    # full_response = index.query(
+    # vector=query_vector,
+    # top_k=3,
+    # include_metadata=True,
+    # namespace=namespace
+    # )
 
-    # 印出完整 Pinecone 回傳資料
-    debug_pinecone_response(full_response)
+    # # 印出完整 Pinecone 回傳資料
+    # debug_pinecone_response(full_response)
 
     print("\n🔍 最相近的 FAQ：\n")
     for i, r in enumerate(results, 1):
