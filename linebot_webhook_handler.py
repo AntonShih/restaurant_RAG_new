@@ -5,7 +5,7 @@ from linebot.v3.messaging import (
 )
 import os
 from line_bot.models import save_user_role, get_user_role
-from RAG.query_engine_safe import answer_query_secure
+from RAG.query.query_engine_safe import answer_query_secure
 
 
 # 初始化 LINE Bot 設定

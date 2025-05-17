@@ -1,6 +1,7 @@
-from compare import search_similar_faqs
+from RAG.core.compare import search_similar_faqs
 import openai
 import os
+from pinecone import Pinecone
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from line_bot.models import get_user_role
@@ -9,12 +10,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def answer_query_secure(query, user_id):
+
+    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+    index = pc.Index(os.getenv("PINECONE_INDEX_NAME"))
+    namespace = os.getenv("PINECONE_NAMESPACE")
+
     """安全版查詢：查 top3，權限過濾後交由 LLM 判斷"""
     user = get_user_role(user_id)
     user_level = user.get("access_level", 0) if user else 0
 
     #如果符合留下來 
-    matches = search_similar_faqs(query, top_k=3)
+    matches = search_similar_faqs(query, index, namespace, top_k=3)
     filtered = [m for m in matches if m["metadata"].get("access_level") <= user_level]
 
     # ✅ DEBUG print 區塊

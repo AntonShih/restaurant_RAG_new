@@ -4,9 +4,9 @@ import sys
 from dotenv import load_dotenv
 from argparse import ArgumentParser
 
-from embedding import embed_faq_list_batch, load_api_key
-from upload import format_for_pinecone
-from compare import search_similar_faqs
+from RAG.core.embedding import embed_faq_list_batch, load_api_key
+from RAG.core.formatting import format_for_pinecone
+from RAG.core.compare import search_similar_faqs
 from pinecone import Pinecone
 
 
