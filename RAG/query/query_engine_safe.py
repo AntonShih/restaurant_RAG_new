@@ -4,7 +4,7 @@ import os
 from pinecone import Pinecone
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from line_bot.models import get_user_role
+from line_bot.services.user_service import get_user_role
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -21,7 +21,7 @@ def answer_query_secure(query, user_id):
 
     #如果符合留下來 
     matches = search_similar_faqs(query, index, namespace, top_k=3)
-    filtered = [m for m in matches if m["metadata"].get("access_level") <= user_level]
+    filtered_matches = [m for m in matches if m["metadata"].get("access_level") <= user_level]
 
     # ✅ DEBUG print 區塊
     print("🔍 [DEBUG] 使用者問題：", query)
@@ -33,14 +33,14 @@ def answer_query_secure(query, user_id):
         print(f" - ({meta.get('access_level')}) {meta['question']}")
 
     print("🔒 Filtered FAQ（符合職等）:")
-    for m in filtered:
+    for m in filtered_matches:
         meta = m["metadata"]
         print(f" ✅ ({meta.get('access_level')}) {meta['question']}")
 
-    if not filtered:
+    if not filtered_matches:
         return "⚠️ 抱歉，您目前的職等無法查閱相關資料，請洽詢上級或管理者。"
 
-    return generate_judged_answer(query, filtered)
+    return generate_judged_answer(query, filtered_matches)
 
 def generate_judged_answer(query, filtered_matches):
     """請 LLM 根據過濾後的內容生成回覆或拒答"""
@@ -79,6 +79,7 @@ def generate_judged_answer(query, filtered_matches):
     ]
 
     print("\n📤 [DEBUG] 傳送給 GPT 的 Prompt：")
+    print(messages[0]["content"])
     print(messages[1]["content"])
 
     completion = openai.chat.completions.create(

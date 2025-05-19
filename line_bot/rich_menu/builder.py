@@ -4,7 +4,7 @@ from PIL import Image
 from linebot.v3.messaging import (
     Configuration, ApiClient, MessagingApi, MessagingApiBlob,
     RichMenuRequest, RichMenuSize, RichMenuArea,
-    RichMenuBounds, MessageAction
+    RichMenuBounds, MessageAction,PostbackAction
 )
 
 # 讀取 .env
@@ -62,13 +62,22 @@ def create_rich_menu():
         line_bot_api = MessagingApi(api_client)
         blob_api = MessagingApiBlob(api_client)
 
+        # areas = [
+        #     RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=MessageAction(text="認證：normal")),
+        #     RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=MessageAction(text="認證：reserve")),
+        #     RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=MessageAction(text="認證：leader")),
+        #     RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=MessageAction(text="認證：vice_manager")),
+        #     RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=MessageAction(text="認證：manager")),
+        #     RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=MessageAction(text="我要查詢"))
+        # ]
+
         areas = [
-            RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=MessageAction(text="認證：normal")),
-            RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=MessageAction(text="認證：reserve")),
-            RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=MessageAction(text="認證：leader")),
-            RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=MessageAction(text="認證：vice_manager")),
-            RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=MessageAction(text="認證：manager")),
-            RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=MessageAction(text="我要查詢"))
+            RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=PostbackAction(label="認證一般員工", data="role:normal")),
+            RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=PostbackAction(label="認證儲備幹部", data="role:reserve")),
+            RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=PostbackAction(label="認證組長", data="role:leader")),
+            RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=PostbackAction(label="認證副店長", data="role:vice_manager")),
+            RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=PostbackAction(label="認證店長", data="role:manager")),
+            RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=PostbackAction(label="我要查詢", data="action:query"))
         ]
 
         rich_menu = RichMenuRequest(

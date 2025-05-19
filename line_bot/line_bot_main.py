@@ -30,10 +30,12 @@ app = FastAPI(lifespan=lifespan)
 # 加入事件處理器
 @handler.add(MessageEvent, message=TextMessageContent)
 def _handle_message(event):
+    print("🎯 _handle_message 被呼叫了！")
     handle_message(event)
 
 @handler.add(PostbackEvent)
 def _handle_postback(event):
+    print("🎯 _handle_postback 被呼叫了！")
     handle_postback(event)
 
 # Webhook 路由

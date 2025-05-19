@@ -7,8 +7,8 @@ import os
 
 from line_bot.services.user_service import save_user_role, get_user_role
 from line_bot.services.auth_state import pending_password_check
-from RAG.query.query_engine_safe import answer_query_secure  # ✅ 改成用 Pinecone + GPT 的流程
-from line_bot.config.role_config import ROLE_TEXT_MAP
+from RAG.query.query_engine_safe import answer_query_secure
+from line_bot.config.role_config import ROLE_TEXT_MAP, ROLE_ACCESS_LEVEL
 
 # 初始化 LINE Bot 設定
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
@@ -21,10 +21,30 @@ def handle_message(event: MessageEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
 
-        # ✅ 使用者從 Rich Menu 或純文字輸入了身份（如：認證：reserve）
+        # Step 1：身份認證流程
         if text.startswith("認證："):
             role = text.replace("認證：", "").strip()
-            pending_password_check[user_id] = role
+
+            # 可選：支援中文轉英文 role
+            reverse_map = {v: k for k, v in ROLE_TEXT_MAP.items()}
+            if role in reverse_map:
+                role = reverse_map[role]
+
+            # 白名單驗證
+            if role not in ROLE_ACCESS_LEVEL:
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text="❌ 無效的身份，請重新選擇正確角色。")]
+                    )
+                )
+                return
+
+            # ✅ 初始化使用者認證狀態（role + attempts）
+            pending_password_check[user_id] = {
+                "role": role,
+                "attempts": 0
+            }
 
             line_bot_api.reply_message(
                 ReplyMessageRequest(
@@ -34,14 +54,25 @@ def handle_message(event: MessageEvent):
             )
             return
 
-        # ✅ 使用者正在輸入密碼進行認證
+        # Step 2：正在進行密碼認證
         if user_id in pending_password_check:
-            role = pending_password_check[user_id]
+            role_info = pending_password_check[user_id]
+
+            # 🛡 保險：如果格式是舊版字串，自動轉新格式
+            if isinstance(role_info, str):
+                role_info = {
+                    "role": role_info,
+                    "attempts": 0
+                }
+                pending_password_check[user_id] = role_info
+
+            role = role_info["role"]
             expected_password = os.getenv(f"PASSWORD_{role.upper()}")
 
             if text == expected_password:
                 save_user_role(user_id, role)
                 del pending_password_check[user_id]
+
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
@@ -49,15 +80,27 @@ def handle_message(event: MessageEvent):
                     )
                 )
             else:
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text="❌ 密碼錯誤，請重新輸入。")]
+                role_info["attempts"] += 1
+                remaining = 3 - role_info["attempts"]
+
+                if role_info["attempts"] >= 3:
+                    del pending_password_check[user_id]
+                    line_bot_api.reply_message(
+                        ReplyMessageRequest(
+                            reply_token=event.reply_token,
+                            messages=[TextMessage(text="❌ 已連續輸入錯誤 3 次，已幫您轉換為QA回答模式。若想請重新驗證請選擇角色。")]
+                        )
                     )
-                )
+                else:
+                    line_bot_api.reply_message(
+                        ReplyMessageRequest(
+                            reply_token=event.reply_token,
+                            messages=[TextMessage(text=f"❌ 密碼錯誤，請重新輸入。您還有 {remaining} 次機會")]
+                        )
+                    )
             return
 
-        # ✅ 啟動 RAG 查詢流程（使用 Pinecone + GPT 判斷）
+        # Step 3：進行 RAG 查詢
         try:
             response = answer_query_secure(text, user_id)
             line_bot_api.reply_message(
