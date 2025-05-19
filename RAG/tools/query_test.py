@@ -2,7 +2,7 @@
 import os
 from dotenv import load_dotenv
 from pinecone import Pinecone
-from core.compare import search_similar_faqs
+from RAG.core.compare import search_similar_faqs
 
 def load_environment():
     load_dotenv()
@@ -13,6 +13,7 @@ def load_environment():
     return index, namespace
 
 if __name__ == "__main__":
+    #測試用: python -m RAG.tools.query_test
     index, namespace = load_environment()
 
     print("\n🤖 FAQ 查詢 CLI 啟動，輸入 exit 離開")

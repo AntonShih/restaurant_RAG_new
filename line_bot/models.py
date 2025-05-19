@@ -1,6 +1,6 @@
 # models.py
 
-from line_bot.mongodb_client import get_db
+from line_bot.db.mongodb import get_db
 from datetime import datetime
 
 # 用戶集合
