@@ -163,3 +163,18 @@ pytest RAG/tests
 
 MIT License。歡迎 Fork、使用、或作為內部訓練系統基礎。  
 如有貢獻需求請提交 Pull Request 或聯繫開發者 🙌
+
+# 🍜 Restaurant RAG LINE Bot
+
+A LINE Bot powered by FastAPI, OpenAI, and Pinecone, built for restaurant staff to ask FAQs using semantic search.
+
+---
+
+## 📦 環境準備
+
+1. 複製 `.env.example` 為 `.env`，填入你的金鑰與設定
+2. 建立 Docker 容器
+
+```bash
+docker build -t restaurant-rag-bot .
+docker run -p 8000:8000 --env-file .env restaurant-rag-bot

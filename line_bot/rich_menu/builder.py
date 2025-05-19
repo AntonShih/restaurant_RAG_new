@@ -16,7 +16,7 @@ configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
 
 # 圖片路徑
 ORIGINAL_IMAGE_PATH = "line_bot/rich_menu/rich_menu1.png"
-COMPRESSED_IMAGE_PATH = "richmenu1.jpg"
+COMPRESSED_IMAGE_PATH = "line_bot/rich_menu/richmenu1.jpg"
 
 
 def compress_rich_menu_image(input_path=ORIGINAL_IMAGE_PATH, output_path=COMPRESSED_IMAGE_PATH, quality=85):
