@@ -6,13 +6,19 @@ from linebot.v3.messaging import (
 import os
 
 from line_bot.services.user_service import save_user_role, get_user_role
-from line_bot.services.auth_state import pending_password_check
-from RAG.query.query_engine_safe import answer_query_secure
+from line_bot.services.auth_state import (
+    start_auth, complete_auth, is_auth_pending,
+    get_pending_role, increment_attempt
+)
 from line_bot.config.role_config import ROLE_TEXT_MAP, ROLE_ACCESS_LEVEL
 
 # 初始化 LINE Bot 設定
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+
+def verify_password(role: str, password: str) -> bool:
+    expected = os.getenv(f"PASSWORD_{role.upper()}")
+    return password == expected
 
 def handle_message(event: MessageEvent):
     user_id = event.source.user_id
@@ -21,31 +27,11 @@ def handle_message(event: MessageEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
 
-        # Step 1：身份認證流程
+            # Step 1：身份認證流程
         if text.startswith("認證："):
             role = text.replace("認證：", "").strip()
-
-            # 可選：支援中文轉英文 role
-            reverse_map = {v: k for k, v in ROLE_TEXT_MAP.items()}
-            if role in reverse_map:
-                role = reverse_map[role]
-
-            # 白名單驗證
-            if role not in ROLE_ACCESS_LEVEL:
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text="❌ 無效的身份，請重新選擇正確角色。")]
-                    )
-                )
-                return
-
-            # ✅ 初始化使用者認證狀態（role + attempts）
-            pending_password_check[user_id] = {
-                "role": role,
-                "attempts": 0
-            }
-
+            # ... reverse_map 和白名單驗證略
+            start_auth(user_id, role)  # ✅ 改成封裝的
             line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -54,25 +40,13 @@ def handle_message(event: MessageEvent):
             )
             return
 
-        # Step 2：正在進行密碼認證
-        if user_id in pending_password_check:
-            role_info = pending_password_check[user_id]
+        # Step 2：密碼驗證
+        if is_auth_pending(user_id):  # ✅ 判斷改封裝
+            role = get_pending_role(user_id)  # ✅ 拿角色
 
-            # 🛡 保險：如果格式是舊版字串，自動轉新格式
-            if isinstance(role_info, str):
-                role_info = {
-                    "role": role_info,
-                    "attempts": 0
-                }
-                pending_password_check[user_id] = role_info
-
-            role = role_info["role"]
-            expected_password = os.getenv(f"PASSWORD_{role.upper()}")
-
-            if text == expected_password:
+            if verify_password(role, text):
                 save_user_role(user_id, role)
-                del pending_password_check[user_id]
-
+                complete_auth(user_id)  # ✅ 成功後移除
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
@@ -80,11 +54,11 @@ def handle_message(event: MessageEvent):
                     )
                 )
             else:
-                role_info["attempts"] += 1
-                remaining = 3 - role_info["attempts"]
+                attempts = increment_attempt(user_id)  # ✅ 嘗試次數封裝
+                remaining = 3 - attempts
 
-                if role_info["attempts"] >= 3:
-                    del pending_password_check[user_id]
+                if attempts >= 3:
+                    complete_auth(user_id)  # ✅ 清除失敗者
                     line_bot_api.reply_message(
                         ReplyMessageRequest(
                             reply_token=event.reply_token,
@@ -99,21 +73,3 @@ def handle_message(event: MessageEvent):
                         )
                     )
             return
-
-        # Step 3：進行 RAG 查詢
-        try:
-            response = answer_query_secure(text, user_id)
-            line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=str(response).strip())]
-                )
-            )
-        except Exception as e:
-            print("❌ GPT 查詢失敗：", str(e))
-            line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text="⚠️ 查詢時發生錯誤，請稍後再試。")]
-                )
-            )

@@ -1,5 +1,6 @@
 
-from datetime import datetime
+from datetime import datetime, timezone
+
 from line_bot.db.mongodb import get_db
 from line_bot.config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
 
@@ -12,9 +13,9 @@ def save_user_role(user_id, role, from_liff=False):
         "role": role,
         "role_text": ROLE_TEXT_MAP.get(role, role),
         "access_level": ROLE_ACCESS_LEVEL.get(role, 0),
-        "verified_at": datetime.utcnow(),
+        "verified_at": datetime.now(timezone.utc),
         "from_liff": from_liff,
-        "updated_at": datetime.utcnow()
+        "updated_at": datetime.now(timezone.utc),
     }
 
     result = users_collection.update_one(

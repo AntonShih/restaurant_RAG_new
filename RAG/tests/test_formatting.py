@@ -1,5 +1,3 @@
-# tests/test_formatting.py
-
 from core.formatting import format_for_pinecone
 
 def test_format_for_pinecone_basic():

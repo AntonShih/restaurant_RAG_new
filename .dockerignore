@@ -1,0 +1,33 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Poetry 虛擬環境
+.venv/
+
+# git 資料夾
+.git/
+.gitignore
+
+# 本地開發設定
+.vscode/
+.idea/
+
+# 機密檔案
+.env
+.env.*
+
+# 測試資料
+tests/
+notebooks/
+
+# 編譯輸出
+*.log
+*.sqlite3
+*.db
+*.DS_Store
+
+# Docker 中不需要的東西
+docker-compose.yml

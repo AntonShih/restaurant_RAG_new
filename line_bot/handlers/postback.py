@@ -7,7 +7,7 @@ from linebot.v3.messaging import (
 import os
 
 from line_bot.config.role_config import ROLE_TEXT_MAP
-from line_bot.services.auth_state import pending_password_check  
+from line_bot.services.auth_state import start_auth  # ✅ 用封裝好的
 
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
@@ -18,7 +18,7 @@ def handle_postback(event: PostbackEvent):
 
     if data.startswith("role:"):
         role = data.split(":")[1]
-        pending_password_check[user_id] = role
+        start_auth(user_id, role)  # ✅ 統一入口
 
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
