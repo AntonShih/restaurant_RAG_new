@@ -22,7 +22,7 @@ jobs:
       with:
         token_format: "id_token"
         workload_identity_provider: "projects/293653495816/locations/global/workloadIdentityPools/github/providers/my-repo"
-        service_account: "293653495816-compute@developer.gserviceaccount.com"
+        service_account: "github-deployer@restaurant-rag.iam.gserviceaccount.com"
 
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v1
