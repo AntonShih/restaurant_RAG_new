@@ -13,6 +13,11 @@ jobs:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v3
 
+      - name: 🧪 Run pytest
+        run: |
+          pip install pytest
+          pytest
+
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -28,11 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: yourdockername/restaurant-rag-bot:latest
-
-      # 可選擇下列兩種做法：
-      # ✅ 自動透過 ssh 到你的 VPS 主機 pull image + restart container
-      # ✅ 發 webhook 給 VPS 上的 webhook listener
+          tags: yourdockername/restaurant-rag-bot:latest, yourdockername/restaurant-rag-bot:${{ github.sha }}
 
       - name: 🚀 Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -43,4 +44,6 @@ jobs:
           script: |
             cd /home/youruser/restaurant_RAG_deploy
             docker pull yourdockername/restaurant-rag-bot:latest
-            docker-compose down && docker-compose up -d
+            docker-compose down
+            docker-compose up -d
+            docker ps -a
