@@ -1,40 +1,55 @@
-# .github/workflows/deploy.yaml
-name: Deploy to Cloud Run
+name: 'Build and Deploy to Cloud Run'
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+
+env:
+  PROJECT_ID: 'restaurant-rag'
+  REGION: 'asia-east1'
+  ARTIFACT_REGISTRY_NAME: 'rag-repo'
+  PROJECT_NAME: 'basic-api'
+  SERVICE_ACCOUNT: 'github-deployer@restaurant-rag.iam.gserviceaccount.com'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/293653495816/locations/global/workloadIdentityPools/github/providers/my-repo'
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
 
     permissions:
-      id-token: write
-      contents: read
+      contents: 'read'
+      id-token: 'write'
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        token_format: "access_token"
-        workload_identity_provider: "projects/293653495816/locations/global/workloadIdentityPools/github/providers/my-repo"
-        service_account: "github-deployer@restaurant-rag.iam.gserviceaccount.com"
+      - name: 'Authenticate to Google Cloud'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+          create_credentials_file: true
 
-    - name: Setup gcloud
-      uses: google-github-actions/setup-gcloud@v1
+      - name: 'Set up gcloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
 
-    - name: Build and Push Docker image
-      run: |
-        gcloud builds submit --tag asia-east1-docker.pkg.dev/restaurant-rag/rag-repo/basic-api
+      - name: 'Configure Docker for Artifact Registry'
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy basic-api \
-          --image=asia-east1-docker.pkg.dev/restaurant-rag/rag-repo/basic-api \
-          --platform=managed \
-          --region=asia-east1 \
-          --allow-unauthenticated
+      - name: 'Build and Push Docker image'
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_NAME }}/${{ env.PROJECT_NAME }}:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: 'Deploy to Cloud Run'
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_NAME }}/${{ env.PROJECT_NAME }}:${{ github.sha }}"
+          gcloud run deploy ${{ env.PROJECT_NAME }} \
+            --image="$IMAGE" \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated
