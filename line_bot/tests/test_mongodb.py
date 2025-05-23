@@ -16,6 +16,7 @@ def test_close_mongodb_client():
     with patch("line_bot.db.mongodb.client", mock_client):
         mongodb.close_mongodb_client()
         mock_client.close.assert_called_once()
+<<<<<<< HEAD
 # ------------------------------------------------------------------------
 # import pytest
 # from unittest.mock import AsyncMock, patch, MagicMock
@@ -36,3 +37,5 @@ def test_close_mongodb_client():
 #     with patch("line_bot.db.mongodb.client", mock_client):
 #         mongodb.close_mongodb_client()
 #         mock_client.close.assert_called_once()
+=======
+>>>>>>> fed8e10df94937b7d798f9dbd6602bbda1e2c234
