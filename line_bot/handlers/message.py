@@ -11,7 +11,7 @@ from line_bot.services.auth_state import (
     get_pending_role, increment_attempt
 )
 from line_bot.config.role_config import ROLE_TEXT_MAP, ROLE_ACCESS_LEVEL
-# from RAG.query.query_engine_safe import answer_query_secure
+from RAG.query.query_engine_safe import answer_query_secure
 
 # 初始化 LINE Bot 設定
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
@@ -41,7 +41,7 @@ def handle_message(event: MessageEvent):
             )
             return
 
-        # Step 2：密碼驗證
+        # Step 2：密碼驗證 暫存的認證流程記憶體（未正式存檔）
         if is_auth_pending(user_id):  # ✅ 判斷改封裝
             role = get_pending_role(user_id)  # ✅ 拿角色
 
@@ -54,6 +54,7 @@ def handle_message(event: MessageEvent):
                         messages=[TextMessage(text=f"✅ 密碼正確，您已成功認證為：{ROLE_TEXT_MAP.get(role, role)}")]
                     )
                 )
+                return
             else:
                 attempts = increment_attempt(user_id)  # ✅ 嘗試次數封裝
                 remaining = 3 - attempts
@@ -66,6 +67,7 @@ def handle_message(event: MessageEvent):
                             messages=[TextMessage(text="❌ 已連續輸入錯誤 3 次，已幫您轉換為QA回答模式。若想請重新驗證請選擇角色。")]
                         )
                     )
+                    return
                 else:
                     line_bot_api.reply_message(
                         ReplyMessageRequest(
@@ -73,7 +75,26 @@ def handle_message(event: MessageEvent):
                             messages=[TextMessage(text=f"❌ 密碼錯誤，請重新輸入。您還有 {remaining} 次機會")]
                         )
                     )
-            return
+                    return
+        # 進入 RAG 查詢流程（Step 3）已寫入 DB 的正式身份資訊
+        user = get_user_role(user_id)
+        if user:
+            try:
+                rag_answer = answer_query_secure(text, user_id)
+            except Exception as e:
+                print("❌ RAG 查詢失敗：", str(e))
+                rag_answer = "❌ 回答時發生錯誤，請稍後再試。"
+        else:
+            rag_answer = "⚠️ 查無使用者身份資訊，請先完成認證。"
+
+        line_bot_api.reply_message(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=rag_answer)]
+            )
+        )
+        return
+        
 # ---------------------------------------------------------------------------------------------------
 # from linebot.v3.webhooks import MessageEvent
 # from linebot.v3.messaging import Configuration, ApiClient, MessagingApi, ReplyMessageRequest, TextMessage
