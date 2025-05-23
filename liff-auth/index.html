@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>職等驗證</title>
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+    input, select { padding: 0.5rem; margin: 1rem 0; width: 80%; max-width: 300px; }
+    button { padding: 0.6rem 1.2rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>🔐 LINE Bot 身分驗證</h2>
+  <p id="status">載入中...</p>
+
+  <div id="verify-form" style="display:none">
+    <label for="role">選擇您的職等：</label><br>
+    <select id="role">
+      <option value="kitchen">內場人員</option>
+      <option value="front">外場人員</option>
+      <option value="reserve">儲備幹部</option>
+      <option value="leader">組長</option>
+      <option value="vice_manager">副店長</option>
+      <option value="manager">店長</option>
+    </select><br>
+
+    <input id="password" type="password" placeholder="請輸入密碼"><br>
+    <button onclick="submitForm()">送出驗證</button>
+  </div>
+
+  <script>
+    let userId = null;
+
+    async function main() {
+      await liff.init({ liffId: '2007394820-Wjz97wOY' });
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+
+      const profile = await liff.getProfile();
+      userId = profile.userId;
+
+      document.getElementById('status').innerText = `歡迎您，${profile.displayName}`;
+      document.getElementById('verify-form').style.display = 'block';
+    }
+
+    async function submitForm() {
+      const role = document.getElementById('role').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('https://你的伺服器/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, role, password })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) liff.closeWindow();
+    }
+
+    main();
+  </script>
+</body>
+</html>
