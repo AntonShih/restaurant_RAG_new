@@ -69,7 +69,7 @@ jobs:
             PINECONE_INDEX_NAME=${{ secrets.PINECONE_INDEX_NAME }}
             LINE_CHANNEL_ACCESS_TOKEN=${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
             LINE_CHANNEL_SECRET=${{ secrets.LINE_CHANNEL_SECRET }}
-            PASSWORD_NORMA=${{ secrets.PASSWORD_NORMA }}
+            PASSWORD_NORMAL=${{ secrets.PASSWORD_NORMAL }}
             PASSWORD_RESERVE=${{ secrets.PASSWORD_RESERVE }}
             PASSWORD_LEADER=${{ secrets.PASSWORD_LEADER }}
             PASSWORD_VICE_MANAGER=${{ secrets.PASSWORD_VICE_MANAGER }}
