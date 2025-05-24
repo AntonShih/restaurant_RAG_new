@@ -36,7 +36,6 @@ def test_get_user_role_not_found(mock_get_db, mock_collection):
 
     result = user_service.get_user_role("unknown_user")
     assert result is None
-<<<<<<< HEAD
 # # ----------------------------------------------------------------------------------------------------
 # import pytest
 # from unittest.mock import AsyncMock, patch
@@ -78,5 +77,3 @@ def test_get_user_role_not_found(mock_get_db, mock_collection):
 
 #     result = await user_service.get_user_role("unknown_user")
 #     assert result is None
-=======
->>>>>>> fed8e10df94937b7d798f9dbd6602bbda1e2c234

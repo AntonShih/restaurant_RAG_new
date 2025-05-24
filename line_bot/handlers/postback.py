@@ -7,7 +7,7 @@ from linebot.v3.messaging import (
 import os
 
 from line_bot.config.role_config import ROLE_TEXT_MAP
-from line_bot.services.auth_state import start_auth  # ✅ 用封裝好的
+from line_bot.services.auth_state import start_auth  
 
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)

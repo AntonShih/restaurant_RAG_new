@@ -7,6 +7,8 @@ from line_bot.config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
 def save_user_role(user_id, role, from_liff=False):
     """儲存使用者身份與權限資訊"""
     users_collection = get_db()["user_roles"]
+        # get_db()["user_roles"]:
+        # 從資料庫中挑出某個 collection（資料表）
 
     user_data = {
         "user_id": user_id,
@@ -17,7 +19,7 @@ def save_user_role(user_id, role, from_liff=False):
         "from_liff": from_liff,
         "updated_at": datetime.now(timezone.utc),
     }
-
+        # 如果我在mongo裡面建過角色了化，就更新他。其實都是更新，只是有名子更新那一筆，沒名子建立新的
     result = users_collection.update_one(
         {"user_id": user_id},
         {"$set": user_data},
@@ -26,7 +28,10 @@ def save_user_role(user_id, role, from_liff=False):
     return result.acknowledged
 
 def get_user_role(user_id):
-    """根據 user_id 查詢該使用者身份資訊"""
+    """
+    根據 user_id 查詢該使用者身份資訊
+    回傳一個user json
+    """
     users_collection = get_db()["user_roles"]
     return users_collection.find_one({"user_id": user_id})
 

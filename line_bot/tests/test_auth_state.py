@@ -1,3 +1,6 @@
+# 測試魔咒 :  $env:PYTHONPATH = Get-Location
+# pytest RAG/tests/
+
 import pytest
 from line_bot.services import auth_state
 

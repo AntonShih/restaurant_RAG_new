@@ -25,12 +25,17 @@ def get_mongodb_client():
             tlsCAFile=certifi.where()  # 加入憑證支援
         )
     return client
+        #  登入 MongoDB 主機
+        #  使用 MONGODB_URI 做身分認證
+        # 回傳一個 MongoClient 物件（代表連上主機）
+
 
 def get_db():
     return get_mongodb_client()[DB_NAME]
-# 1. 如果沒連線，就先連
-# 2. 進入指定的 DB
-# 3. 把那個 DB 物件給你
+
+        # get_db():
+        # 從 MongoClient 選出指定的資料庫（DB_NAME）
+        # 回傳該資料庫（Database 物件）
 
 def close_mongodb_client():
     global client
