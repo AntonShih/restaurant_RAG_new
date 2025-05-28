@@ -115,11 +115,7 @@
 
 from linebot.v3.webhooks import MessageEvent
 from linebot.v3.messaging import ReplyMessageRequest, TextMessage
-from config.environment import (
-    init_openai, init_pinecone,
-    get_pinecone_index, get_namespace,
-    get_line_api
-)
+
 from line_bot.services.user_service import save_user_role, get_user_role
 from line_bot.services.auth_state import (
     start_auth, complete_auth, is_auth_pending,
@@ -129,21 +125,17 @@ from line_bot.config.role_config import ROLE_TEXT_MAP,ROLE_KEY_MAP
 from RAG.query.query_engine_safe import answer_query_secure
 
 
-def handle_message(event: MessageEvent):
+def handle_message(event: MessageEvent, line_bot_api, index, namespace):
     """
     訊息處理主流程 
     1.是否輸入驗"證試:"了畫會直接接著跑2.
     2.從暫存中抓帳號在裡面的就是要認證 認證制度是3次 postback 因為會暫存也被丟過來
     3.都不是就直接取得mongo user role 進行RAG
     """
-    init_openai()
-    init_pinecone()
-    index = get_pinecone_index()
-    namespace = get_namespace()
     user_id = event.source.user_id
     text = event.message.text.strip()
 
-    line_bot_api = get_line_api()
+    # line_bot_api = get_line_api()
 
     if handle_identity_auth_flow(text, user_id, line_bot_api, event):
             return

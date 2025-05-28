@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pinecone import Pinecone
 import openai
 from linebot.v3.messaging import Configuration,MessagingApi,ApiClient
-
+from linebot.v3 import WebhookHandler
 
 # 讀取 .env 檔案內容進入 os.environ
 load_dotenv()
@@ -41,3 +41,14 @@ def get_line_api() -> MessagingApi:
     config = get_line_configuration()
     client = ApiClient(config)
     return MessagingApi(client)
+
+def get_line_handler() -> WebhookHandler:
+    """取得 WebhookHandler 實例"""
+    LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
+    return WebhookHandler(LINE_CHANNEL_SECRET)
+
+def get_mongodb_config():
+    return {
+        "uri": os.getenv("MONGODB_URI"),
+        "db_name": os.getenv("MONGODB_DB_NAME")
+    }
