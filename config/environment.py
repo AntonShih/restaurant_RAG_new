@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from pinecone import Pinecone
 import openai
-from linebot.v3.messaging import Configuration
+from linebot.v3.messaging import Configuration,MessagingApi,ApiClient
 
 
 # 讀取 .env 檔案內容進入 os.environ
@@ -35,3 +35,9 @@ def get_line_configuration():
     """取得 LINE SDK 所需的設定物件"""
     LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
     return Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+
+def get_line_api() -> MessagingApi:
+    """return MessagingApi(client)"""
+    config = get_line_configuration()
+    client = ApiClient(config)
+    return MessagingApi(client)
