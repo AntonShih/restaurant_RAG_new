@@ -1,14 +1,7 @@
-import os
-from dotenv import load_dotenv
-from pinecone import Pinecone
-import openai
+from openai import embeddings
+from typing import List
 
-# 初始化環境
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-
-def search_similar_faqs(query: str, index, namespace: str, top_k: int = 3):
+def search_similar_faqs(query: str, index, namespace: str, top_k: int = 3)-> List[dict]:
     """
     根據輸入的問題 query，使用 OpenAI 嵌入後查詢 Pinecone 資料庫中最相似的 FAQ。
 
@@ -23,7 +16,7 @@ def search_similar_faqs(query: str, index, namespace: str, top_k: int = 3):
     """
     ...
     
-    response = openai.embeddings.create(
+    response = embeddings.create(
         input=query,
         model="text-embedding-3-small"
     )

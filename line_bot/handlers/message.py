@@ -12,6 +12,7 @@ from line_bot.services.auth_state import (
 )
 from line_bot.config.role_config import ROLE_TEXT_MAP
 from RAG.query.query_engine_safe import answer_query_secure
+from config.environment import init_openai, get_pinecone_index, get_namespace, init_pinecone
 
 # 初始化 LINE Bot 設定 身份憑證
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
@@ -23,6 +24,15 @@ def verify_password(role: str, password: str) -> bool:
     return password == expected
 
 def handle_message(event: MessageEvent):
+
+    # 初始化 Pinecone 與 OpenAI（可放主程式只跑一次）
+    init_openai()
+    init_pinecone()
+
+    # 拿到 index 與 namespace
+    index = get_pinecone_index()
+    namespace = get_namespace()
+
     user_id = event.source.user_id
     text = event.message.text.strip()
 
@@ -82,7 +92,7 @@ def handle_message(event: MessageEvent):
         user = get_user_role(user_id) #雖然他回傳詳細資料但我只用來看有沒有驗證成功而已
         if user:
             try:
-                rag_answer = answer_query_secure(text, user_id)
+                rag_answer = answer_query_secure(text, user_id, index, namespace)
             except Exception as e:
                 print("❌ RAG 查詢失敗：", str(e))
                 rag_answer = "❌ 回答時發生錯誤，請稍後再試。"

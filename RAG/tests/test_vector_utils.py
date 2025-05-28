@@ -1,9 +1,5 @@
-import sys, os
-import pytest
 from unittest.mock import MagicMock
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from core.pinecone_checker import get_existing_vector_info
+from RAG.core.pinecone_checker import get_existing_vector_info
 
 # 假設 Pinecone 的 Index 是一個物件，我們用 mock 模擬它
 class MockPineconeIndex:

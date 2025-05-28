@@ -1,6 +1,4 @@
-import sys,os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from core.embedding import embed_faq_list_batch
+from RAG.core.embedding import embed_faq_list_batch
 
 def test_embed_faq_list_batch_generates_embedding():
     # 模擬一筆 FAQ

@@ -1,49 +1,54 @@
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from RAG.core.compare import search_similar_faqs
 import openai
-from pinecone import Pinecone
+from RAG.core.compare import search_similar_faqs
 from line_bot.services.user_service import get_user_role
+from config.environment import init_openai,get_pinecone_index,get_namespace,init_pinecone
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+import logging
+logger = logging.getLogger(__name__)
 
-
-def answer_query_secure(query, user_id):
-
-    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-    index = pc.Index(os.getenv("PINECONE_INDEX_NAME"))
-    namespace = os.getenv("PINECONE_NAMESPACE")
-
+def answer_query_secure(query: str, user_id: str, index, namespace):
+    
     """安全版查詢：查 top3，權限過濾後交由 LLM 判斷"""
     user = get_user_role(user_id)
     user_level = user.get("access_level", 0) if user else 0
 
-    #如果符合留下來 
+    #查top3有沒有符合權限可看內容 留下可看的
     matches = search_similar_faqs(query, index, namespace, top_k=3)
     filtered_matches = [m for m in matches if m["metadata"].get("access_level") <= user_level]
 
-    # ✅ DEBUG print 區塊
-    print("🔍 [DEBUG] 使用者問題：", query)
-    print("👤 [DEBUG] 使用者 ID：", user_id, "職等等級：", user_level)
-
-    print("📥 Top3 FAQ:")
-    for m in matches:
-        meta = m["metadata"]
-        print(f" - ({meta.get('access_level')}) {meta['question']}")
-
-    print("🔒 Filtered FAQ（符合職等）:")
-    for m in filtered_matches:
-        meta = m["metadata"]
-        print(f" ✅ ({meta.get('access_level')}) {meta['question']}")
+    logger.info(f"使用者 {user_id} 查詢：{query}")
+    logger.debug(f"原始比對筆數：{len(matches)}；權限內筆數：{len(filtered_matches)}")
 
     if not filtered_matches:
-        return "⚠️ 抱歉，您目前的職等無法查閱相關資料，請洽詢上級或管理者。"
+        logger.warning(f"使用者 {user_id} 無法查詢權限內 FAQ")
+        return "⚠️ 您的職等無法查閱資料，請洽詢管理者"
 
     return generate_judged_answer(query, filtered_matches)
 
+
 def generate_judged_answer(query, filtered_matches):
-    """請 LLM 根據過濾後的內容生成回覆或拒答"""
+    """請 LLM 根據過濾後的內容生成回覆或拒答
+    
+    ⚠️ 回傳格式（openai.chat.completions.create）：
+    {
+        "id": "...",
+        "object": "chat.completion",
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "您好，歡迎光臨本餐廳！"
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150
+        }
+    }
+    
+    """
     context = ""
     # 這邊的1是enumerate從1號開始context只給他問題跟答案而已，語意完整
     for i, m in enumerate(filtered_matches, 1):
@@ -90,26 +95,6 @@ def generate_judged_answer(query, filtered_matches):
     )
 
     reply = completion.choices[0].message.content.strip()
-# 範例回傳格式：
-#     {
-#   "id": "chatcmpl-abc123",
-#   "object": "chat.completion",
-#   "choices": [
-#     {
-#       "index": 0,
-#       "message": {
-#         "role": "assistant",
-#         "content": "您好，歡迎光臨本餐廳！"
-#       },
-#       "finish_reason": "stop"
-#     }
-#   ],
-#   "usage": {
-#     "prompt_tokens": 100,
-#     "completion_tokens": 50,
-#     "total_tokens": 150
-#   }
-# }
     
     print("\n🧾 [DEBUG] GPT 回覆內容：")
     print(reply)
@@ -118,11 +103,18 @@ def generate_judged_answer(query, filtered_matches):
     return reply
 
 if __name__ == "__main__":
+    # 測試 poetry run python -m RAG.query.query_engine_safe
+
+    init_openai()
+    init_pinecone()
+    index = get_pinecone_index()
+    namespace = get_namespace()
+
     # 手動測試區：輸入問題與使用者 ID 來模擬查詢流程
     query = input("請輸入你要查詢的問題：\n> ")
     user_id = input("請輸入模擬的使用者 ID：\n> ")
 
-    answer = answer_query_secure(query, user_id)
+    answer = answer_query_secure(query, user_id, index, namespace)
     
     print("\n💬 最終回覆內容：")
     print(answer)

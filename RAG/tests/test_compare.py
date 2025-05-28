@@ -1,7 +1,10 @@
 from unittest.mock import MagicMock
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from core.compare import search_similar_faqs
+from RAG.core.compare import search_similar_faqs
+
+# 測試指令 全域 $env:PYTHONPATH="."; poetry run pytest
+# $env:PYTHONPATH="." ; poetry run pytest RAG/tests 
+# $env:PYTHONPATH="." ; poetry run pytest RAG/tests/test_compare.py 
+
 
 def test_search_similar_faqs_returns_results():
     mock_index = MagicMock()
