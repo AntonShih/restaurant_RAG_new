@@ -1,3 +1,5 @@
+#  uvicorn line_bot.line_bot_main:app --reload
+
 from fastapi import FastAPI, Request, Header, HTTPException
 from contextlib import asynccontextmanager
 from linebot.v3.exceptions import InvalidSignatureError

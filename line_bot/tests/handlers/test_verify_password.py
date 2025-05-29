@@ -1,8 +1,8 @@
 # 測 verify_password
 
 # 測試指令 全域 $env:PYTHONPATH="."; poetry run pytest
-# $env:PYTHONPATH="." ; poetry run pytest line_bot/tests
-# $env:PYTHONPATH="." ; poetry run pytest line_bot/tests/test_verify_password.py
+# $env:PYTHONPATH="." ; poetry run pytest line_bot/tests/handlers
+# $env:PYTHONPATH="." ; poetry run pytest line_bot/tests/handlers/test_verify_password.py
 from line_bot.handlers.message import verify_password
 
 def test_verify_password(monkeypatch):

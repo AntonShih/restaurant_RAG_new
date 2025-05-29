@@ -135,8 +135,6 @@ def handle_message(event: MessageEvent, line_bot_api, index, namespace):
     user_id = event.source.user_id
     text = event.message.text.strip()
 
-    # line_bot_api = get_line_api()
-
     if handle_identity_auth_flow(text, user_id, line_bot_api, event):
             return
 
@@ -235,6 +233,17 @@ if __name__ == "__main__":
     from config import environment
     environment.get_line_api = lambda: MockLineAPI()
 
+    # ✅ 把 mock instance 存成變數，等一下要傳給 handle_message
+    line_bot_api = environment.get_line_api()
+
+    # 替代掉原有的取值函式
+    environment.get_pinecone_index = lambda: "mock_index"
+    environment.get_namespace = lambda: "mock-namespace"
+
+    index = environment.get_pinecone_index()
+    namespace = environment.get_namespace()
+
+
     # ✅ 最後再 import handle_message，確保用到的是 mock 過的版本
     from line_bot.handlers.message import handle_message
 
@@ -276,8 +285,8 @@ if __name__ == "__main__":
     "message": {
         "type": "text",
         "id": "msg_1",
-        "text": "認證：admin",
-        "quoteToken": "qt_1",
+        "text": "1234",
+        "quoteToken": "qt_2",
         "emojis": [],
         "mention": {"mentionees": []}
     }
@@ -285,8 +294,11 @@ if __name__ == "__main__":
 
 
     # ✅ 執行身份認證的完整兩步
+
     print("\n--- 🔐 Step 1：送出 認證：admin ---")
-    handle_message(MessageEvent.from_dict(json_event_1))
+    handle_message(MessageEvent.from_dict(json_event_1), line_bot_api, index, namespace)
 
     print("\n--- 🔐 Step 2：送出 密碼 1234 ---")
-    handle_message(MessageEvent.from_dict(json_event_2))
+    handle_message(MessageEvent.from_dict(json_event_2), line_bot_api, index, namespace)
+
+
