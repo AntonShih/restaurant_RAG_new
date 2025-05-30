@@ -189,6 +189,9 @@ def handle_pending_password_flow(text, user_id, line_bot_api, event):
 def handle_rag_flow(text, user_id, index, namespace, line_bot_api, event):
     """取得mongo user role 進行RAG"""
     user = get_user_role(user_id)
+
+    print(user)
+    
     if user:
         try:
             rag_answer = answer_query_secure(text, user_id, index, namespace)
@@ -213,92 +216,92 @@ def verify_password(role: str, password: str) -> bool:
     return password == expected
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # poetry run python -m line_bot.handlers.message 
+#     # poetry run python -m line_bot.handlers.message 
 
-    import os
-    from unittest.mock import MagicMock
-    from linebot.v3.webhooks.models import MessageEvent
+#     import os
+#     from unittest.mock import MagicMock
+#     from linebot.v3.webhooks.models import MessageEvent
 
-    # ✅ 設定環境變數：密碼 admin 對應的密碼為 1234
-    os.environ["PASSWORD_ADMIN"] = "1234"
+#     # ✅ 設定環境變數：密碼 admin 對應的密碼為 1234
+#     os.environ["PASSWORD_ADMIN"] = "1234"
 
-    # ✅ 建立假的 LINE Messaging API（不真的呼叫 LINE）
-    class MockLineAPI:
-        def reply_message(self, request):
-            print(f"[🧪 MOCK REPLY] {request.reply_token}: {[m.text for m in request.messages]}")
+#     # ✅ 建立假的 LINE Messaging API（不真的呼叫 LINE）
+#     class MockLineAPI:
+#         def reply_message(self, request):
+#             print(f"[🧪 MOCK REPLY] {request.reply_token}: {[m.text for m in request.messages]}")
 
-    # ✅ 替換 get_line_api 成為 mock（這一步要在 import handle_message 之前）
-    from config import environment
-    environment.get_line_api = lambda: MockLineAPI()
+#     # ✅ 替換 get_line_api 成為 mock（這一步要在 import handle_message 之前）
+#     from config import environment
+#     environment.get_line_api = lambda: MockLineAPI()
 
-    # ✅ 把 mock instance 存成變數，等一下要傳給 handle_message
-    line_bot_api = environment.get_line_api()
+#     # ✅ 把 mock instance 存成變數，等一下要傳給 handle_message
+#     line_bot_api = environment.get_line_api()
 
-    # 替代掉原有的取值函式
-    environment.get_pinecone_index = lambda: "mock_index"
-    environment.get_namespace = lambda: "mock-namespace"
+#     # 替代掉原有的取值函式
+#     environment.get_pinecone_index = lambda: "mock_index"
+#     environment.get_namespace = lambda: "mock-namespace"
 
-    index = environment.get_pinecone_index()
-    namespace = environment.get_namespace()
-
-
-    # ✅ 最後再 import handle_message，確保用到的是 mock 過的版本
-    from line_bot.handlers.message import handle_message
-
-    # ✅ 第 1 筆訊息：模擬「認證：admin」
-    json_event_1 = {
-    "replyToken": "token_1",
-    "type": "message",
-    "mode": "active",
-    "timestamp": 1716890993000,
-    "webhookEventId": "mock_event_id_1",  # ✅ 加上這個
-    "deliveryContext": {"isRedelivery": False},  # ✅ 加上這個
-    "source": {
-        "type": "user",
-        "userId": "U1234567890"
-    },
-    "message": {
-        "type": "text",
-        "id": "msg_1",
-        "text": "認證：admin",
-        "quoteToken": "qt_1",
-        "emojis": [],
-        "mention": {"mentionees": []}
-    }
-}
+#     index = environment.get_pinecone_index()
+#     namespace = environment.get_namespace()
 
 
-    # ✅ 第 2 筆訊息：模擬「輸入正確密碼」
-    json_event_2 = {
-    "replyToken": "token_2",
-    "type": "message",
-    "mode": "active",
-    "timestamp": 1716890993000,
-    "webhookEventId": "mock_event_id_2",  # ✅ 加上這個
-    "deliveryContext": {"isRedelivery": False},  # ✅ 加上這個
-    "source": {
-        "type": "user",
-        "userId": "U1234567890"
-    },
-    "message": {
-        "type": "text",
-        "id": "msg_1",
-        "text": "1234",
-        "quoteToken": "qt_2",
-        "emojis": [],
-        "mention": {"mentionees": []}
-    }
-}
+#     # ✅ 最後再 import handle_message，確保用到的是 mock 過的版本
+#     from line_bot.handlers.message import handle_message
+
+#     # ✅ 第 1 筆訊息：模擬「認證：admin」
+#     json_event_1 = {
+#     "replyToken": "token_1",
+#     "type": "message",
+#     "mode": "active",
+#     "timestamp": 1716890993000,
+#     "webhookEventId": "mock_event_id_1",  # ✅ 加上這個
+#     "deliveryContext": {"isRedelivery": False},  # ✅ 加上這個
+#     "source": {
+#         "type": "user",
+#         "userId": "U1234567890"
+#     },
+#     "message": {
+#         "type": "text",
+#         "id": "msg_1",
+#         "text": "認證：admin",
+#         "quoteToken": "qt_1",
+#         "emojis": [],
+#         "mention": {"mentionees": []}
+#     }
+# }
 
 
-    # ✅ 執行身份認證的完整兩步
+#     # ✅ 第 2 筆訊息：模擬「輸入正確密碼」
+#     json_event_2 = {
+#     "replyToken": "token_2",
+#     "type": "message",
+#     "mode": "active",
+#     "timestamp": 1716890993000,
+#     "webhookEventId": "mock_event_id_2",  # ✅ 加上這個
+#     "deliveryContext": {"isRedelivery": False},  # ✅ 加上這個
+#     "source": {
+#         "type": "user",
+#         "userId": "U1234567890"
+#     },
+#     "message": {
+#         "type": "text",
+#         "id": "msg_1",
+#         "text": "1234",
+#         "quoteToken": "qt_2",
+#         "emojis": [],
+#         "mention": {"mentionees": []}
+#     }
+# }
 
-    print("\n--- 🔐 Step 1：送出 認證：admin ---")
-    handle_message(MessageEvent.from_dict(json_event_1), line_bot_api, index, namespace)
 
-    print("\n--- 🔐 Step 2：送出 密碼 1234 ---")
-    handle_message(MessageEvent.from_dict(json_event_2), line_bot_api, index, namespace)
+#     # ✅ 執行身份認證的完整兩步
+
+#     print("\n--- 🔐 Step 1：送出 認證：admin ---")
+#     handle_message(MessageEvent.from_dict(json_event_1), line_bot_api, index, namespace)
+
+#     print("\n--- 🔐 Step 2：送出 密碼 1234 ---")
+#     handle_message(MessageEvent.from_dict(json_event_2), line_bot_api, index, namespace)
 
 
