@@ -1,6 +1,6 @@
 name: Run Tests with Coverage
 
-on: [push, pull_request]
+on: [push, pull_request]  # ✅ 這要在最外層
 
 jobs:
   test:
@@ -15,11 +15,13 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Install dependencies
+      - name: Install Poetry and dependencies
         run: |
           pip install poetry
           poetry install
 
       - name: Run tests with coverage threshold
         run: |
-          poetry run pytest --cov=your_package --cov-fail-under=70
+          PYTHONPATH=. poetry run pytest \
+            --cov=.
+            --cov-fail-under=70
