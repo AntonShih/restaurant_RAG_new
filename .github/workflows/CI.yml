@@ -23,5 +23,4 @@ jobs:
       - name: Run tests with coverage threshold
         run: |
           PYTHONPATH=. poetry run pytest \
-            --cov=.
-            --cov-fail-under=70
+            poetry run pytest --cov=RAG --cov=line_bot --cov-fail-under=70
