@@ -1,6 +1,6 @@
 name: Run Tests with Coverage
 
-on: [push, pull_request]  # ✅ 這要在最外層
+on: [push, pull_request]
 
 jobs:
   test:
@@ -22,4 +22,4 @@ jobs:
 
       - name: Run tests with coverage threshold
         run: |
-          PYTHONPATH= PYTHONPATH=. poetry run pytest --cov=RAG --cov=line_bot --cov-fail-under=70
+          PYTHONPATH=. poetry run pytest --cov=RAG --cov=line_bot --cov-fail-under=70

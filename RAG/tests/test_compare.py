@@ -50,11 +50,11 @@ def test_search_similar_faqs_returns_results():
         mock_response.data = [mock_embedding]
 
         mock_create.return_value = mock_response
-        
-        from RAG.core import compare
+
+        from RAG.core.compare import search_similar_faqs
         namespace = "test"
         query = "什麼時候要倒垃圾？"
-        results = compare.search_similar_faqs(query, mock_index, namespace, top_k=3)
+        results = search_similar_faqs(query, mock_index, namespace, top_k=3)
 
         assert isinstance(results, list)
         assert results[0]["metadata"]["question"] == "何時倒垃圾？"
