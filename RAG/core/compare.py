@@ -1,4 +1,4 @@
-from openai import embeddings
+import openai
 from typing import List
 
 def search_similar_faqs(query: str, index, namespace: str, top_k: int = 3)-> List[dict]:
@@ -16,7 +16,7 @@ def search_similar_faqs(query: str, index, namespace: str, top_k: int = 3)-> Lis
     """
     ...
     
-    response = embeddings.create(
+    response = openai.embeddings.create(
         input=query,
         model="text-embedding-3-small"
     )
