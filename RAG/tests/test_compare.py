@@ -29,7 +29,6 @@
 
 
 from unittest.mock import patch, MagicMock
-from RAG.core import compare
 
 def test_search_similar_faqs_returns_results():
     mock_index = MagicMock()
@@ -51,7 +50,8 @@ def test_search_similar_faqs_returns_results():
         mock_response.data = [mock_embedding]
 
         mock_create.return_value = mock_response
-
+        
+        from RAG.core import compare
         namespace = "test"
         query = "什麼時候要倒垃圾？"
         results = compare.search_similar_faqs(query, mock_index, namespace, top_k=3)

@@ -22,7 +22,6 @@
 # $env:PYTHONPATH="." ; poetry run pytest RAG/tests/test_embedding.py
 
 from unittest.mock import patch, MagicMock
-from RAG.core.embedding import embed_faq_list_batch
 
 @patch("RAG.core.embedding.openai.embeddings.create")
 def test_embed_faq_list_batch_generates_embedding(mock_create):
@@ -34,7 +33,8 @@ def test_embed_faq_list_batch_generates_embedding(mock_create):
     mock_response.data = [mock_embedding]
 
     mock_create.return_value = mock_response
-
+    
+    from RAG.core.embedding import embed_faq_list_batch
     sample_data = [
         {
             "question": "如何清洗咖啡機？",
