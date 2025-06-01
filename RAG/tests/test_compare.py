@@ -27,8 +27,43 @@
 #     assert "question" in results[0]["metadata"]
 #     assert "answer" in results[0]["metadata"]
 
+# -------------------------------------------------------------
 
-from unittest.mock import patch, MagicMock
+# from unittest.mock import patch, MagicMock
+
+# def test_search_similar_faqs_returns_results():
+#     mock_index = MagicMock()
+#     mock_index.query.return_value = {
+#         "matches": [
+#             {
+#                 "metadata": {"question": "何時倒垃圾？", "answer": "晚上十點前倒垃圾"},
+#                 "score": 0.95
+#             }
+#         ]
+#     }
+
+#     with patch("RAG.core.compare.embeddings.create") as mock_create:
+#         # ✅ 不要再寫 dict，要回傳一個真正有 .data 的物件
+#         mock_embedding = MagicMock()
+#         mock_embedding.embedding = [0.1] * 1536
+
+#         mock_response = MagicMock()
+#         mock_response.data = [mock_embedding]
+
+#         mock_create.return_value = mock_response
+
+#         from RAG.core.compare import search_similar_faqs
+#         namespace = "test"
+#         query = "什麼時候要倒垃圾？"
+#         results = search_similar_faqs(query, mock_index, namespace, top_k=3)
+
+#         assert isinstance(results, list)
+#         assert results[0]["metadata"]["question"] == "何時倒垃圾？"
+
+# ?----------------------------------------------------------------------
+
+from RAG.core.compare import search_similar_faqs
+from unittest.mock import MagicMock
 
 def test_search_similar_faqs_returns_results():
     mock_index = MagicMock()
@@ -41,22 +76,11 @@ def test_search_similar_faqs_returns_results():
         ]
     }
 
-    with patch("RAG.core.compare.embeddings.create") as mock_create:
-        # ✅ 不要再寫 dict，要回傳一個真正有 .data 的物件
-        mock_embedding = MagicMock()
-        mock_embedding.embedding = [0.1] * 1536
+    namespace = "test"
+    query = "什麼時候要倒垃圾？"
 
-        mock_response = MagicMock()
-        mock_response.data = [mock_embedding]
+    results = search_similar_faqs(query, mock_index, namespace, top_k=3)
 
-        mock_create.return_value = mock_response
-
-        from RAG.core.compare import search_similar_faqs
-        namespace = "test"
-        query = "什麼時候要倒垃圾？"
-        results = search_similar_faqs(query, mock_index, namespace, top_k=3)
-
-        assert isinstance(results, list)
-        assert results[0]["metadata"]["question"] == "何時倒垃圾？"
-
-
+    assert isinstance(results, list)
+    assert len(results) > 0
+    assert results[0]["metadata"]["question"] == "何時倒垃圾？"
