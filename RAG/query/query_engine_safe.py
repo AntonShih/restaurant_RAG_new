@@ -1,7 +1,9 @@
 import openai
 from RAG.core.compare import search_similar_faqs
 from line_bot.services.user_service import get_user_role
-from config.environment import init_openai,get_pinecone_index,get_namespace,init_pinecone
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
 
 import logging
 logger = logging.getLogger(__name__)

@@ -3,11 +3,13 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from argparse import ArgumentParser
-from config.environment import init_openai, get_pinecone_index, get_namespace, init_pinecone
-from RAG.tools.upload_faq import upload_faq_from_json
-from RAG.tools.query_loop import interactive_mode
-from RAG.tools.embedding_preview import run_preview
-from RAG.tools.manual_query_test import run_manual_query_test
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
+from tools.RAG_tools.upload_faq import upload_faq_from_json
+from tools.RAG_tools.query_loop import interactive_mode
+from tools.RAG_tools.embedding_preview import run_preview
+from tools.RAG_tools.manual_query_test import run_manual_query_test
 from RAG.query.query_engine_safe import answer_query_secure
 from config.log_config import init_logging
 import logging

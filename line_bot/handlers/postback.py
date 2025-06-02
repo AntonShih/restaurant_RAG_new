@@ -2,7 +2,7 @@
 from linebot.v3.webhooks import PostbackEvent
 from linebot.v3.messaging import ReplyMessageRequest, TextMessage
 
-from line_bot.config.role_config import ROLE_TEXT_MAP
+from config.role_config import ROLE_TEXT_MAP
 from line_bot.services.auth_state import start_auth  
 
 

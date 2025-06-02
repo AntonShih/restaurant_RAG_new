@@ -1,13 +1,11 @@
 # 測試用來篩選使用可可以看到什麼資訊
 
-from config.environment import init_openai,get_pinecone_index,get_namespace,init_pinecone
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
 from RAG.query.query_engine_safe import answer_query_secure
 
-def run_manual_query_test():
-    init_openai()
-    init_pinecone()
-    index = get_pinecone_index()
-    namespace = get_namespace()
+def run_manual_query_test(index, namespace):
 
     query = input("請輸入你要查詢的問題：\n> ")
     user_id = input("請輸入模擬的使用者 ID：\n> ")
@@ -18,11 +16,11 @@ def run_manual_query_test():
     print(answer)
 
 if __name__ == "__main__":
-    # 測試poetry run python -m RAG.tools.manual_query_test
+    # 測試poetry run python -m tools.RAG_tools.manual_query_tes
     
     init_openai()
     init_pinecone()
     index = get_pinecone_index()
     namespace = get_namespace()
     
-    run_manual_query_test()
+    run_manual_query_test(index, namespace)

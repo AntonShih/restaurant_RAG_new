@@ -2,10 +2,11 @@
 import json
 import os
 from RAG.core.embedding import embed_faq_list_batch
-from RAG.core.formatting import format_for_pinecone
+from models.formatting import format_for_pinecone
 from RAG.core.pinecone_checker import get_existing_vector_info
-from config.environment import init_openai,get_pinecone_index,get_namespace,init_pinecone
-
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
 
 def process_faq_file(path="data/sop.json"):
     """
@@ -70,7 +71,7 @@ def upload_faq_from_json(path,index,namespace,batch_size=100):
 
 
 if __name__ == "__main__":
-    # 測試 python -m RAG.tools.upload_faq
+    # 測試 python -m tools.RAG_tools.upload_faq
     # 檢查 FAQ 去重狀態（單純看資料）
     # faqs = process_faq_file("data/sop.json")
     # print(faqs[:2])  # 印出前兩筆看看內容
@@ -81,5 +82,5 @@ if __name__ == "__main__":
     namespace = get_namespace()
 
      # 執行上傳流程（會自帶處理 + 上傳）
-    upload_faq_from_json("data/sop.json")
+    upload_faq_from_json("data/sop.json",index,namespace)
 

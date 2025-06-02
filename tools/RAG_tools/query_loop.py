@@ -1,6 +1,8 @@
 # 開發使用用來測search_similar_faqs功能是否正常 ，找前三相似的
 from RAG.core.compare import search_similar_faqs
-from config.environment import init_openai, get_pinecone_index, get_namespace, init_pinecone
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
 
 def interactive_mode(index, namespace):
     print("\n🤖 餐飲業 FAQ 助手已啟動，輸入 'exit' 離開\n")
@@ -23,7 +25,7 @@ def interactive_mode(index, namespace):
             print(f"{i}. [{meta.get('category', '未分類')}] {meta.get('question')}\n   答：{meta.get('answer')}\n   相似度：{round(r['score'], 4)}\n")
 
 if __name__ == "__main__":
-    # 測試 poetry run python -m RAG.tools.query_loop
+    # 測試 poetry run python -m tools.RAG_tools.query_loop
 
         # 初始化
     init_openai()

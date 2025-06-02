@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 
 from line_bot.db.mongodb import get_db
-from line_bot.config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
+from config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
 
 def save_user_role(user_id, role, from_liff=False):
     """儲存使用者身份與權限資訊"""

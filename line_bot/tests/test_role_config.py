@@ -1,5 +1,5 @@
 import pytest
-from line_bot.config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
+from config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
 
 def test_role_access_structure():
     for role, level in ROLE_ACCESS_LEVEL.items():

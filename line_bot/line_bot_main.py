@@ -9,7 +9,11 @@ from line_bot.db.mongodb import get_db, close_mongodb_client
 from line_bot.services.user_service import init_user_roles_index
 from line_bot.handlers.message import handle_message
 from line_bot.handlers.postback import handle_postback
-from config.environment import init_openai, init_pinecone, get_pinecone_index, get_namespace,get_line_handler,get_line_api
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
+from config.line import get_line_handler
+from adapters.line_adapter import get_line_api
 
 init_openai()
 init_pinecone()

@@ -3,7 +3,7 @@
 import json
 import os
 from RAG.core.embedding import embed_faq_list_batch
-from config.environment import init_openai
+from config.openai import init_openai
 
 def run_preview(
     input_path,
@@ -27,6 +27,6 @@ def run_preview(
 
 
 if __name__ == "__main__":
-    # 測試 poetry run python -m RAG.tools.embedding_preview
+    # 測試 poetry run python -m tools.RAG_tools.embedding_preview
     init_openai()
     run_preview("data/sop.json")

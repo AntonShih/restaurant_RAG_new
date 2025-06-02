@@ -2,7 +2,7 @@ import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
-from config.environment import get_mongodb_config
+from config.mongodb import get_mongodb_config
 
 _client = None
 

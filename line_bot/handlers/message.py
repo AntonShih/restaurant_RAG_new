@@ -121,7 +121,7 @@ from line_bot.services.auth_state import (
     start_auth, complete_auth, is_auth_pending,
     get_pending_role, increment_attempt
 )
-from line_bot.config.role_config import ROLE_TEXT_MAP,ROLE_KEY_MAP
+from config.role_config import ROLE_TEXT_MAP,ROLE_KEY_MAP
 from RAG.query.query_engine_safe import answer_query_secure
 
 
