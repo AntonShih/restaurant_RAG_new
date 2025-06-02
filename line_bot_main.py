@@ -10,10 +10,15 @@ from config.pinecone import init_pinecone, get_namespace
 from config.line import get_line_handler
 from adapters.line_adapter import get_line_api
 from adapters.pinecone_adapter import get_pinecone_index
-from line_bot.db.mongodb import get_db, close_mongodb_client
-from line_bot.db.init_db import init_user_roles_index
+from line_bot1.db.mongodb import get_db, close_mongodb_client
+from line_bot1.db.init_db import init_user_roles_index
 from line_bot1.handlers.message_handler import handle_message
 from line_bot1.handlers.postback_handler import handle_postback
+import logging
+
+
+from config.log_config import init_logging
+init_logging(level=logging.DEBUG, to_file=False)
 
 
 # ✅ 初始化 SDK 與必要變數

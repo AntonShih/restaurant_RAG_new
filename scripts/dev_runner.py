@@ -1,0 +1,73 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from argparse import ArgumentParser
+from config.openai import init_openai
+from config.pinecone import get_namespace,init_pinecone
+from adapters.pinecone_adapter import get_pinecone_index
+from tools.RAG_tools.upload_faq import upload_faq_from_json
+from tools.RAG_tools.query_loop import interactive_mode
+from tools.RAG_tools.embedding_preview import run_preview
+from tools.RAG_tools.manual_query_test import run_manual_query_test
+from tools.RAG_tools.pinecone_checker import get_existing_vector_info
+from RAG.query.query_engine_safe import answer_query_secure
+from config.log_config import init_logging
+import logging
+
+init_logging(level=logging.DEBUG, to_file=True)
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("--upload", action="store_true", help="是否執行 FAQ 上傳")
+    parser.add_argument("--path", type=str, default="data/sop.json", help="FAQ JSON 檔案路徑")
+    parser.add_argument("--interactive", action="store_true", help="是否啟用互動查詢模式")
+    parser.add_argument("--embedding_preview", action="store_true", help="是否在上傳前查看embedding格式前幾筆是否正確")
+    parser.add_argument("--test_query", action="store_true", help="手動測試 FAQ 查詢流程")
+    parser.add_argument("--check_existing_vectors", action="store_true", help="檢查目前 namespace 中已存在的向量 ID 與問題")
+
+    args = parser.parse_args()
+
+    print("🚀 餐飲業 FAQ 系統啟動")
+    init_openai()
+    init_pinecone()
+    index = get_pinecone_index()
+    namespace = get_namespace()
+
+    if args.embedding_preview:
+        print("💬  在上傳前查看embedding格式前幾筆是否正確")
+        run_preview(input_path=args.path)
+
+    if args.upload:
+        print("⬆️  開始上傳 FAQ 向量資料")
+        upload_faq_from_json(args.path,index,namespace)
+
+    if args.interactive:
+        print("💬  啟用查詢互動模式")
+        interactive_mode(index, namespace)
+
+    if args.test_query:
+        print("💬  測試問問題，用設定的帳號及權限看回答是否正確")
+        run_manual_query_test(index, namespace)
+
+        # logging 測試：用固定問題與使用者 ID 查詢
+        test_query = "今天幾點打烊"
+        test_user_id = "U_test123"
+
+        print("\n💬 Logging 測試查詢：", test_query)
+        result = answer_query_secure(test_query, test_user_id, index, namespace)
+        print("🧠 回覆內容：", result)
+
+    if args.check_existing_vectors:
+        print("🔍 檢查現有向量資料...")
+        ids, questions = get_existing_vector_info(index, namespace)
+        print(f"✅ 已存在向量 ID 數量：{len(ids)}")
+        print(f"✅ 已存在問題數量：{len(questions)}")
+
+
+if __name__ == "__main__":
+    # 測試 poetry run python scripts/dev_runner.py --upload --test_query
+    # --interactive  --embedding_preview 
+    # 可指定路徑喔--path data/faq_law.json
+    main()
