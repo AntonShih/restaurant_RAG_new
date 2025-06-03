@@ -23,32 +23,23 @@
 ---
 ## 🛠 技術架構（Tech Stack）
 
-### 📦 Backend / LINE 整合
-- **FastAPI (async)**：輕量、高效的 API 框架，目前為同步處理，保留 async 擴充彈性
-- **line-bot-sdk v3**：支援 async，整合 LINE Bot 接收訊息與回覆
+ - 後端框架：FastAPI（同步處理，保留 async 擴充彈性）
 
-### 🧠 AI 與資料檢索
-- **OpenAI Embedding + Pinecone**：實作語意向量查詢（RAG 檢索式生成）
-- **角色權限過濾**：根據使用者職位權限比對結果並控制可見內容
+ - 訊息串接：LINE Messaging API（line-bot-sdk v3）
 
-### 🔐 身份驗證與資料庫
-- **MongoDB Atlas**：儲存使用者身份與角色資訊
-- **權限控管設計**：依職位設定可查詢資料等級
+ - AI 向量檢索：OpenAI Embedding + Pinecone（RAG 檢索式生成）
 
-### 🔁 CI/CD 與部署
-- **Docker**：容器化專案，保證部署一致性
-- **GitHub Actions + GCP Cloud Run**：實現自動化部署流程
+ - 身份驗證與權限控管：MongoDB（使用者角色 + 存取分級）
 
-### 🧪 測試（規劃中，詳見 `refactor/module-restructure` 分支）
-- **Pytest + Mock**：初步建立測試流程，驗證資料流與外部服務整合
-- **Coverage**：預計導入覆蓋率追蹤，提升系統品質穩定性
+ - 資料上傳與清洗：支援 FAQ JSON 批次匯入、自動去重
 
-
-### 🧾 FAQ 資料維護
-- **JSON FAQ 上傳模組**：支援自定 FAQ 資料快速更新
-- **資料清洗 + 去重機制**：避免重複上傳至向量資料庫
+ - 部署與維運：Docker + GitHub Actions + GCP Cloud Run（CI/CD 自動部署）
 
 ---
+## 🧪 測試（規劃中）
+ - Pytest + Mock：初步建立測試流程，驗證資料流與外部服務整合
+
+ - Coverage：預計導入覆蓋率追蹤，提升系統品質穩定性
 
 ## 📦 專案結構（模組職責導向）
 
