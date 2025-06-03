@@ -5,15 +5,50 @@
 ---
 ## ✨ 特色亮點
 
-🤖 LINE 聊天即問即答：無須安裝額外 App，直接透過 LINE 對話查詢
+### 🤖 LINE 聊天即問即答  
+無需安裝額外 App，用戶可直接透過 LINE 對話進行即時查詢，降低使用門檻、提升便利性。
 
-🔐 身份驗證 + 權限控管：不同職位可查閱不同內容，守住知識邊界
+### 🔐 身份驗證與權限控管  
+導入多層身份驗證機制，不同職位可查閱不同內容，確保內部知識安全、避免資訊外洩。
 
-🧠 AI 回答嚴謹可靠：基於 FAQ 向量語意比對，GPT 僅依照有權該職位有權獲得資訊結合或去除生成回應，回應必須資料中已有知識不得自行擴充
+### 🧠 嚴謹可信的 AI 回應邏輯  
+透過 FAQ 向量語意比對，GPT 僅針對使用者有權取得的資料進行內容組合與生成，不得自行擴寫，確保回應可溯源、可驗證。
 
-🧾 SOP / FAQ 自由擴充：支援 JSON 上傳，未來可對接 Word、PDF 文件
+### ☁️ 雲端自動部署：GitHub Actions + GCP Cloud Run  
+專案支援 Docker 化建置，並透過 GitHub Actions 自動部署至 GCP Cloud Run，快速上線、輕鬆維護。
 
-☁️ GitHub Actions 自動部署到 GCP Cloud Run：支援 Docker 化建置與 GCP 雲端部署
+### ⚙️ CI/CD 自動化工作流程  
+建構完整的持續整合與持續部署流程（CI/CD），有效提升開發交付效率與系統穩定性。
+
+---
+## 🛠 技術架構（Tech Stack）
+
+### 📦 Backend / LINE 整合
+- **FastAPI (async)**：輕量、高效的 API 框架，目前為同步處理，保留 async 擴充彈性
+- **line-bot-sdk v3**：支援 async，整合 LINE Bot 接收訊息與回覆
+
+### 🧠 AI 與資料檢索
+- **OpenAI Embedding + Pinecone**：實作語意向量查詢（RAG 檢索式生成）
+- **角色權限過濾**：根據使用者職位權限比對結果並控制可見內容
+
+### 🔐 身份驗證與資料庫
+- **MongoDB Atlas**：儲存使用者身份與角色資訊
+- **權限控管設計**：依職位設定可查詢資料等級
+
+### 🔁 CI/CD 與部署
+- **Docker**：容器化專案，保證部署一致性
+- **GitHub Actions + GCP Cloud Run**：實現自動化部署流程
+
+### 🧪 測試（規劃中，詳見 `refactor/module-restructure` 分支）
+- **Pytest + Mock**：初步建立測試流程，驗證資料流與外部服務整合
+- **Coverage**：預計導入覆蓋率追蹤，提升系統品質穩定性
+
+
+### 🧾 FAQ 資料維護
+- **JSON FAQ 上傳模組**：支援自定 FAQ 資料快速更新
+- **資料清洗 + 去重機制**：避免重複上傳至向量資料庫
+
+---
 
 ## 📦 專案結構（模組職責導向）
 
@@ -46,18 +81,6 @@ restaurant-rag/             # 專案根目錄
 └── pyproject.toml          # Poetry 依賴管理
 ```
 ---
-
-## 📌 本專案採「職責導向模組設計」
-
-第三方服務封裝統一於 adapters/
-
-LINE webhook 與回覆訊息封裝於 line_bot/
-
-測試與開發工具統一放在 tools/
-
-CI/CD 自動化配置集中於 .github/
-
-如此設計讓維護與擴充變得簡潔有序，並方便後續引入 Web 前台、權限角色分層與記錄分析等功能模組。
 
 ## ⚙️ 快速安裝與設定
 
@@ -148,6 +171,7 @@ docker push asia-east1-docker.pkg.dev/YOUR_PROJECT_ID/your-repo/line-rag-bot
 | ✅ 完善 CI/CD 測試流程 | 增加自動化測試與部署驗證邏輯                                                 |
 | 🎨 Flex Bubble 美化 | 將回答格式設計得更結構化、視覺引導性更佳                                         |
 | 🧑‍💻 外部認證頁面   | 新增 Web 認證介面，支援密碼輸入與身份確認                                         |
+| 🧑‍💻 Fastapi   | 新增 Web 認證介面，支援密碼輸入與身份確認                                         |
 
 ---
 
