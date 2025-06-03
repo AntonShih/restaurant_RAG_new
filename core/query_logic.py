@@ -1,59 +1,5 @@
-# # core/query_logic.py
-# from core.compare import compare_vectors
-# import openai
+# TODO: 後續將 openai 相關邏輯移至 adapter
 
-
-# def get_top_k_matches(query: str, index, namespace: str, embedding_func, top_k: int = 3) -> list[dict]:
-#     """
-#     取得語意最相近的 Top-K 答案（使用外部注入的 embedding function）
-#     """
-#     query_vector = embedding_func(query)
-#     return compare_vectors(query_vector, index, namespace, top_k)
-
-
-# def filter_by_permission(matches: list[dict], user_level: int, filter_func) -> list[dict]:
-#     """
-#     用職等過濾答案（使用外部注入的過濾邏輯）
-#     """
-#     return filter_func(matches, user_level)
-
-
-# def generate_judged_answer(query: str, filtered_matches: list[dict]) -> str:
-#     """
-#     根據匹配結果讓 GPT 回覆
-#     """
-#     context = "\n".join(
-#         f"{i}. 問題: {m['metadata']['question']}\n   回答: {m['metadata']['answer']}"
-#         for i, m in enumerate(filtered_matches, 1)
-#     )
-
-#     messages = [
-#         {
-#             "role": "system",
-#             "content": (
-#                 "你是一位餐飲 FAQ 助理。\n"
-#                 "請根據提供的 FAQ 判斷是否能回答問題。\n"
-#                 "僅限使用 FAQ 提供內容，不得使用常識或額外資料。\n"
-#                 "若 FAQ 無法涵蓋，請回：「目前無法提供準確答案」。\n"
-#                 "若問題不屬於餐飲業常見任務範疇，請回：「這不是我能處理的範疇哦～」。\n"
-#                 "請勿加入結語與多餘關心語句。"
-#             )
-#         },
-#         {
-#             "role": "user",
-#             "content": f"使用者問：「{query}」\n以下是他有權限查閱的 FAQ：\n{context}"
-#         }
-#     ]
-
-#     completion = openai.chat.completions.create(
-#         model="gpt-3.5-turbo",
-#         messages=messages,
-#         max_tokens=300,
-#         temperature=0.1
-#     )
-#     return completion.choices[0].message.content.strip()
-
-# core/query_logic.py
 import logging
 from core.compare import compare_vectors
 import openai
@@ -62,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def get_top_k_matches(query: str, index, namespace: str, embedding_func, top_k: int = 3) -> list[dict]:
     """
-    取得語意最相近的 Top-K 答案（使用外部注入的 embedding function）
+    輸入純文字自動轉向量，取得語意最相近的 Top-K 答案（使用外部注入的 embedding function）
     """
     query_vector = embedding_func(query)
     return compare_vectors(query_vector, index, namespace, top_k)

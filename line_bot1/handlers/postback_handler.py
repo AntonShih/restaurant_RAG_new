@@ -1,4 +1,3 @@
-# line_bot1/handlers/postback_handler.py
 
 from linebot.v3.webhooks import PostbackEvent
 from services.postback_service import PostbackService

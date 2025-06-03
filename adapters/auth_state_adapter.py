@@ -1,4 +1,4 @@
-# adapters/auth_state_adapter.py
+# 全域暫存型的狀態管理器
 
 class AuthStateStore:
     def __init__(self):

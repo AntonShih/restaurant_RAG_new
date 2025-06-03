@@ -1,7 +1,5 @@
-# line_bot/routers/message.py
-
+# 處理handle_message 資訊 1.驗證身分流程 2.若在DB中找到身分則可以開始進行RAG查詢
 from services.auth_service import AuthService
-# from services.rag_service import RagService  # 假設你也有封裝查詢邏輯
 from adapters.user_role_adapter import get_user_role
 from linebot.v3.messaging import TextMessage, ReplyMessageRequest
 from services.query_service import handle_secure_query

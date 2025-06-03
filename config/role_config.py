@@ -10,7 +10,7 @@ ROLE_ACCESS_LEVEL = {
 
 # 每種角色的中文對照（UI 顯示用）
 ROLE_TEXT_MAP= {
-    "normal": "一般職員",
+    "normal": "一般員工",
     "reserve": "儲備幹部",
     "leader": "組長",
     "vice_manager": "副店長",
@@ -24,6 +24,6 @@ ROLE_KEY_MAP = {
     "副店長": "vice_manager",
     "組長": "leader",
     "儲備幹部": "reserve",
-    "一般職員": "normal",
+    "一般員工": "normal",
     "訪客": "guest"
 }
