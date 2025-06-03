@@ -1,0 +1,121 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "lg",
+    "contents": [
+      {
+        "type": "text",
+        "text": "📘 使用教學",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#1DB446"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "🔐 認證身份",
+            "weight": "bold",
+            "size": "md"
+          },
+          {
+            "type": "text",
+            "text": "點選 下方職位或 輸入「認證：職位」\n例如：認證：店長",
+            "wrap": true,
+            "size": "sm",
+            "color": "#555555"
+          }
+        ]
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "🤖 問問題",
+            "weight": "bold",
+            "size": "md"
+          },
+          {
+            "type": "text",
+            "text": "輸入問題，我會用 AI 幫你找答案\n例如：炸鍋油多久換？",
+            "wrap": true,
+            "size": "sm",
+            "color": "#555555"
+          }
+        ]
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "📥 教材下載",
+            "weight": "bold",
+            "size": "md"
+          },
+          {
+            "type": "text",
+            "text": "點下方按鈕可下載完整教材",
+            "wrap": true,
+            "size": "sm",
+            "color": "#555555"
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "md",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "🔐 我要認證",
+          "text": "認證：店長"
+        }
+      },
+      {
+        "type": "button",
+        "style": "primary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "🤖 試著問我",
+          "text": "炸鍋油多久換？"
+        }
+      },
+      {
+        "type": "button",
+        "style": "link",
+        "height": "sm",
+        "action": {
+          "type": "uri",
+          "label": "📥 查看教材",
+          "uri": "https://www.notion.so/Anton-Shih-ai-1a1ba6c6f6e1801fb80dea216176154f"
+        }
+      }
+    ]
+  }
+}

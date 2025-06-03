@@ -15,8 +15,8 @@ CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
 
 # 圖片路徑
-ORIGINAL_IMAGE_PATH = "line_bot/rich_menu/rich_menu1.png"
-COMPRESSED_IMAGE_PATH = "line_bot/rich_menu/richmenu1.jpg"
+ORIGINAL_IMAGE_PATH = "tools/line_bot_tools/rich_menu1.png"
+COMPRESSED_IMAGE_PATH = "tools/line_bot_tools/richmenu1.jpg"
 
 
 def compress_rich_menu_image(input_path=ORIGINAL_IMAGE_PATH, output_path=COMPRESSED_IMAGE_PATH, quality=85):
@@ -77,7 +77,7 @@ def create_rich_menu():
             RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=PostbackAction(label="認證組長", data="role:leader")),
             RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=PostbackAction(label="認證副店長", data="role:vice_manager")),
             RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=PostbackAction(label="認證店長", data="role:manager")),
-            RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=PostbackAction(label="我要查詢", data="action:query"))
+            RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=PostbackAction(label="我要查詢", data="action:how_to_use"))
         ]
 
         rich_menu = RichMenuRequest(
