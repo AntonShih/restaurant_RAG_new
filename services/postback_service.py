@@ -2,7 +2,7 @@
 from config.role_config import ROLE_TEXT_MAP
 from linebot.v3.messaging import TextMessage, FlexMessage
 from adapters.auth_state_adapter import auth_store
-from line_bot1.templates.how_to_use import load_how_to_use_flex
+from line_bot.templates.how_to_use import load_how_to_use_flex
 
 class PostbackService:
     """

@@ -1,7 +1,7 @@
 
 from datetime import datetime, timezone
 from config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
-from line_bot1.db.mongodb import get_db
+from line_bot.db.mongodb import get_db
 
 user_role_collection = get_db()["user_role"]
 

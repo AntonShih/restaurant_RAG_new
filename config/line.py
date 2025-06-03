@@ -10,11 +10,6 @@ def get_line_configuration():
     LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
     return Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 
-# def get_line_api() -> MessagingApi:
-#     """return MessagingApi(client)"""
-#     config = get_line_configuration()
-#     client = ApiClient(config)
-#     return MessagingApi(client)
 
 def get_line_handler() -> WebhookHandler:
     """取得 WebhookHandler 實例"""
