@@ -138,6 +138,7 @@ docker push asia-east1-docker.pkg.dev/YOUR_PROJECT_ID/your-repo/line-rag-bot
 * 設定環境變數與 webhook callback URL
 * 部署完成後即可透過 LINE 使用
 
+---
 
 ## 🧩 擴充建議（未來 Roadmap）
 
@@ -147,8 +148,6 @@ docker push asia-east1-docker.pkg.dev/YOUR_PROJECT_ID/your-repo/line-rag-bot
 | ✅ 完善 CI/CD 測試流程 | 增加自動化測試與部署驗證邏輯                                                 |
 | 🎨 Flex Bubble 美化 | 將回答格式設計得更結構化、視覺引導性更佳                                         |
 | 🧑‍💻 外部認證頁面   | 新增 Web 認證介面，支援密碼輸入與身份確認                                         |
-
-
 
 ---
 
