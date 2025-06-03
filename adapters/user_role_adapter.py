@@ -1,6 +1,4 @@
 
-# adapters/user_role_adapter.py
-
 from datetime import datetime, timezone
 from config.role_config import ROLE_ACCESS_LEVEL, ROLE_TEXT_MAP
 from line_bot1.db.mongodb import get_db

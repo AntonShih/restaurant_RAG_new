@@ -1,10 +1,11 @@
+# rich menu 搭建
 from dotenv import load_dotenv
 import os
 from PIL import Image
 from linebot.v3.messaging import (
     Configuration, ApiClient, MessagingApi, MessagingApiBlob,
     RichMenuRequest, RichMenuSize, RichMenuArea,
-    RichMenuBounds, MessageAction,PostbackAction
+    RichMenuBounds,PostbackAction
 )
 
 # 讀取 .env
@@ -61,15 +62,6 @@ def create_rich_menu():
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         blob_api = MessagingApiBlob(api_client)
-
-        # areas = [
-        #     RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=MessageAction(text="認證：normal")),
-        #     RichMenuArea(bounds=RichMenuBounds(x=834, y=0, width=833, height=843), action=MessageAction(text="認證：reserve")),
-        #     RichMenuArea(bounds=RichMenuBounds(x=1667, y=0, width=833, height=843), action=MessageAction(text="認證：leader")),
-        #     RichMenuArea(bounds=RichMenuBounds(x=0, y=843, width=833, height=843), action=MessageAction(text="認證：vice_manager")),
-        #     RichMenuArea(bounds=RichMenuBounds(x=834, y=843, width=833, height=843), action=MessageAction(text="認證：manager")),
-        #     RichMenuArea(bounds=RichMenuBounds(x=1667, y=843, width=833, height=843), action=MessageAction(text="我要查詢"))
-        # ]
 
         areas = [
             RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=833, height=843), action=PostbackAction(label="認證一般員工", data="role:normal")),

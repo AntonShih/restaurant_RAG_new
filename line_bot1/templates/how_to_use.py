@@ -1,3 +1,4 @@
+# 如何使用的flex message
 import json
 from linebot.v3.messaging.models.flex_container import FlexContainer
 

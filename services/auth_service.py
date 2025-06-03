@@ -1,4 +1,4 @@
-# services/auth_service.py
+# handle message 驗證角色的封包
 from adapters.auth_state_adapter import auth_store
 from config.role_config import ROLE_KEY_MAP, ROLE_TEXT_MAP
 from core.auth.password import verify_password

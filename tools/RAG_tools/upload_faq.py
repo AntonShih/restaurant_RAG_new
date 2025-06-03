@@ -1,9 +1,9 @@
 # 資料上傳vector DB前的準備
 import json
 import os
-from RAG.core.embedding import embed_faq_list_batch
+from core.embedding import embed_faq_list_batch
 from models.formatting import format_for_pinecone
-from RAG.core.pinecone_checker import get_existing_vector_info
+from tools.RAG_tools.pinecone_checker import get_existing_vector_info
 from config.openai import init_openai
 from config.pinecone import get_namespace,init_pinecone
 from adapters.pinecone_adapter import get_pinecone_index

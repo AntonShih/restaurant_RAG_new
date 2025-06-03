@@ -1,3 +1,4 @@
+# pinecone資料格式
 def format_for_pinecone(faq_list: list) -> list:
     pinecone_vectors = []
 

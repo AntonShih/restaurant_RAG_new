@@ -1,4 +1,5 @@
 # line_bot1/templates/bubble_builder.py
+# 未來優化ui方向
 
 def generate_flex_answer_bubble(user_query: str, gpt_answer: str, matches: list) -> dict:
     """
