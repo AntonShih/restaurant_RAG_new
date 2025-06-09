@@ -1,4 +1,4 @@
-# Dockerfile
+# Dockerfile地端測試版
 FROM python:3.12-slim
 
 # 環境設定
@@ -11,9 +11,9 @@ RUN pip install --no-cache-dir poetry==$POETRY_VERSION
 # 複製 pyproject.toml 和 poetry.lock（讓 Docker 利用快取）
 COPY pyproject.toml poetry.lock* /app/
 
-# 安裝依賴（只安裝非 dev）
+# 安裝依賴
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-root --only main
+  && poetry install --with dev
 
 RUN poetry show uvicorn
 

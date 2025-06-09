@@ -9,12 +9,12 @@
 - 🔐 **身份與權限控管**：根據使用者職位，提供相應的資訊查閱權限。
 - 🧠 **可信的 AI 回應**：基於 FAQ 向量比對，GPT 僅生成授權範圍內的回應。
 - ☁️ **自動化雲端部署**：透過 GitHub Actions 自動部署至 GCP Cloud Run。
-- ⚙️ **CI/CD 流程整合**：實現持續整合與部署，提升開發效率與系統穩定性。
+- ⚙️ **CD 流程整合**：實現持續部署，提升開發效率。
 
 ---
 ## 🛠 技術架構（Tech Stack）
 
- - 後端框架：FastAPI（同步處理，保留 async 擴充彈性）
+ - 後端框架：FastAPI（同步處理，預留 async 擴充彈性）
 
  - 訊息串接：LINE Messaging API（line-bot-sdk v3）
 
@@ -24,7 +24,7 @@
 
  - 資料上傳與清洗：支援 FAQ JSON 批次匯入、自動去重
 
- - 部署與維運：Docker + GitHub Actions + GCP Cloud Run（CI/CD 自動部署）
+ - 部署與維運：Docker + GitHub Actions （CD）+ GCP Cloud Run
 
 ---
 
@@ -52,7 +52,7 @@ restaurant-rag/             # 專案根目錄
 │   └── RAG_tools/          # FAQ 上傳工具 upload_faq.py
 ├── README.md               # 專案說明文件
 ├── line_bot_main.py        # FastAPI 主應用入口，接收 webhook 並路由事件
-├── Dockerfile              # 本地/測試版本部署用
+├── Dockerfile.dev             # 本地/測試版本
 ├── deploy.Dockerfile       # 對應 Cloud Run 正式部署用
 ├── .env.example            # 附上格式範例、用於部署環境參考
 ├── requirements.txt        # 部屬需要
